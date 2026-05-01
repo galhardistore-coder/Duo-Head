@@ -26,6 +26,41 @@ import { cn, ASSETS, getDriveImageUrl, getDriveViewerUrl } from './lib/utils';
 
 // --- Components ---
 
+const CountdownTimer = () => {
+  const [timeLeft, setTimeLeft] = useState(600); // 10 minutes in seconds
+
+  useEffect(() => {
+    if (timeLeft <= 0) return;
+    const timer = setInterval(() => {
+      setTimeLeft(prev => prev - 1);
+    }, 1000);
+    return () => clearInterval(timer);
+  }, [timeLeft]);
+
+  const formatTime = (seconds: number) => {
+    const mins = Math.floor(seconds / 60);
+    const secs = seconds % 60;
+    return `${mins.toString().padStart(2, '0')}:${secs.toString().padStart(2, '0')}`;
+  };
+
+  return (
+    <div className="fixed top-0 left-0 right-0 z-[60] bg-black/90 backdrop-blur-sm py-2 px-4 border-b border-white/10 flex items-center justify-center gap-3 shadow-xl">
+      <div className="flex items-center gap-2">
+        <Clock size={16} className="text-[#25D366] animate-pulse" />
+        <p className="text-white text-[10px] md:text-sm font-bold uppercase tracking-widest">
+          Oferta Especial termina em:
+        </p>
+      </div>
+      <div className={cn(
+        "text-xl md:text-2xl font-mono font-black tabular-nums min-w-[70px] text-center",
+        timeLeft < 60 ? "text-red-500 animate-pulse" : "text-[#25D366]"
+      )}>
+        {formatTime(timeLeft)}
+      </div>
+    </div>
+  );
+};
+
 const VariationCarousel = () => {
   const [emblaRef, emblaApi] = useEmblaCarousel({ 
     loop: true,
@@ -161,9 +196,11 @@ export default function App() {
   return (
     <div className="min-h-screen bg-[#F5F5F5] text-[#111] font-sans overflow-x-hidden">
       
+      <CountdownTimer />
+      
       {/* Header / Nav */}
       <nav className={cn(
-        "fixed top-0 left-0 right-0 z-50 transition-all duration-300 py-4 px-6 flex justify-between items-center",
+        "fixed top-12 left-0 right-0 z-50 transition-all duration-300 py-4 px-6 flex justify-between items-center",
         isScrolled ? "bg-white/90 backdrop-blur-md shadow-sm" : "bg-transparent"
       )}>
         <div className="flex items-center gap-2">
@@ -180,7 +217,7 @@ export default function App() {
       </nav>
 
       {/* 1. HERO */}
-      <section className="pt-32 pb-16 px-6 relative overflow-hidden">
+      <section className="pt-48 pb-16 px-6 relative overflow-hidden">
         <div className="max-w-6xl mx-auto flex flex-col items-center text-center">
           <motion.div
             initial={{ opacity: 0, y: 20 }}
