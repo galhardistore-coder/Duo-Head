@@ -57,15 +57,13 @@ const VideoPlayer = ({ srcId, title, className }: { srcId: string; title: string
       <div className="absolute inset-0 z-10 bg-transparent pointer-events-none" />
       
       {isVisible ? (
-        <div className="absolute inset-0 scale-[1.1] origin-center">
-          <iframe 
-            src={`https://drive.google.com/file/d/${srcId}/preview?autoplay=1&mute=1`} 
-            className="absolute top-[-20%] left-[-10%] w-[120%] h-[140%] border-none shadow-none pointer-events-none"
-            title={title}
-            allow="autoplay; encrypted-media"
-            referrerPolicy="no-referrer"
-          />
-        </div>
+        <iframe 
+          src={`https://drive.google.com/file/d/${srcId}/preview?autoplay=1&mute=1`} 
+          className="w-full h-full border-none"
+          title={title}
+          allow="autoplay; encrypted-media"
+          referrerPolicy="no-referrer"
+        />
       ) : (
         <div className="w-full h-full flex items-center justify-center bg-gray-900 group cursor-pointer">
           <div className="bg-white/10 p-6 rounded-full backdrop-blur-sm animate-pulse">
@@ -493,10 +491,14 @@ export default function App() {
       {/* 9. VÍDEOS DE DEMONSTRAÇÃO */}
       <Section className="bg-[#111] text-white">
         <SectionTitle>Veja o Duo Head em ação</SectionTitle>
-        <div className="max-w-4xl mx-auto">
+        <div className="max-w-6xl mx-auto grid md:grid-cols-2 gap-12">
           <VideoPlayer 
             srcId={ASSETS.VIDEOS.SEC1} 
-            title="Demonstração Prática"
+            title="Demonstração Prática 1"
+          />
+          <VideoPlayer 
+            srcId={ASSETS.VIDEOS.SEC2} 
+            title="Demonstração Prática 2"
           />
         </div>
       </Section>
