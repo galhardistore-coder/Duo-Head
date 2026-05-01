@@ -465,7 +465,7 @@ export default function App() {
           
           <div className="flex flex-col items-center gap-6 mb-12">
             <div className="flex items-baseline gap-2">
-              <span className="text-gray-400 text-2xl line-through">R$ 149,90</span>
+              <span className="text-gray-400 text-2xl line-through">R$ 79,90</span>
             </div>
             <div className="bg-white/10 px-8 py-4 rounded-2xl flex flex-col items-center">
               <span className="text-gray-300 font-bold">Por apenas</span>
