@@ -59,7 +59,7 @@ const VideoPlayer = ({ srcId, title, className }: { srcId: string; title: string
       {isVisible ? (
         <div className="absolute inset-0 scale-[1.1] origin-center">
           <iframe 
-            src={`https://drive.google.com/file/d/${srcId}/preview`} 
+            src={`https://drive.google.com/file/d/${srcId}/preview?autoplay=1&mute=1`} 
             className="absolute top-[-20%] left-[-10%] w-[120%] h-[140%] border-none shadow-none pointer-events-none"
             title={title}
             allow="autoplay; encrypted-media"
