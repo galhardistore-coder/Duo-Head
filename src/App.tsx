@@ -57,13 +57,15 @@ const VideoPlayer = ({ srcId, title, className }: { srcId: string; title: string
       <div className="absolute inset-0 z-10 bg-transparent pointer-events-none" />
       
       {isVisible ? (
-        <iframe 
-          src={`https://drive.google.com/file/d/${srcId}/preview?autoplay=1&mute=1`} 
-          className="w-full h-full border-none"
-          title={title}
-          allow="autoplay; encrypted-media"
-          referrerPolicy="no-referrer"
-        />
+        <div className="absolute inset-0 overflow-hidden">
+          <iframe 
+            src={`https://drive.google.com/file/d/${srcId}/preview?autoplay=1&mute=1`} 
+            className="absolute top-1/2 left-1/2 w-[500%] h-[500%] -translate-x-1/2 -translate-y-1/2 border-none scale-[0.2] origin-center"
+            title={title}
+            allow="autoplay; encrypted-media"
+            referrerPolicy="no-referrer"
+          />
+        </div>
       ) : (
         <div className="w-full h-full flex items-center justify-center bg-gray-900 group cursor-pointer">
           <div className="bg-white/10 p-6 rounded-full backdrop-blur-sm animate-pulse">
