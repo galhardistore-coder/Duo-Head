@@ -493,14 +493,10 @@ export default function App() {
       {/* 9. VÍDEOS DE DEMONSTRAÇÃO */}
       <Section className="bg-[#111] text-white">
         <SectionTitle>Veja o Duo Head em ação</SectionTitle>
-        <div className="max-w-6xl mx-auto grid md:grid-cols-2 gap-12">
+        <div className="max-w-4xl mx-auto">
           <VideoPlayer 
             srcId={ASSETS.VIDEOS.SEC1} 
-            title="Demonstração Prática 1"
-          />
-          <VideoPlayer 
-            srcId={ASSETS.VIDEOS.SEC2} 
-            title="Demonstração Prática 2"
+            title="Demonstração Prática"
           />
         </div>
       </Section>
