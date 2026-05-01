@@ -21,9 +21,79 @@ import {
   Play
 } from 'lucide-react';
 import React, { useState, useEffect } from 'react';
+import useEmblaCarousel from 'embla-carousel-react';
 import { cn, ASSETS, getDriveImageUrl, getDriveViewerUrl } from './lib/utils';
 
 // --- Components ---
+
+const VariationCarousel = () => {
+  const [emblaRef, emblaApi] = useEmblaCarousel({ 
+    loop: true,
+    align: 'start',
+    slidesToScroll: 1,
+    breakpoints: {
+      '(min-width: 768px)': { slidesToScroll: 2 },
+      '(min-width: 1024px)': { slidesToScroll: 3 }
+    }
+  });
+
+  const scrollPrev = React.useCallback(() => emblaApi && emblaApi.scrollPrev(), [emblaApi]);
+  const scrollNext = React.useCallback(() => emblaApi && emblaApi.scrollNext(), [emblaApi]);
+
+  return (
+    <div className="relative group">
+      <div className="overflow-hidden" ref={emblaRef}>
+        <div className="flex -ml-4">
+          {ASSETS.IMAGES.VARIATIONS.map((variant, index) => (
+            <div key={index} className="flex-[0_0_100%] min-w-0 pl-4 md:flex-[0_0_50%] lg:flex-[0_0_33.33%]">
+              <motion.div
+                whileHover={{ y: -10 }}
+                className="bg-gray-50 rounded-3xl overflow-hidden shadow-lg h-full border border-gray-100"
+              >
+                <div className="aspect-square relative overflow-hidden">
+                  <img 
+                    src={getDriveImageUrl(variant.id)} 
+                    alt={variant.name} 
+                    className="w-full h-full object-cover transition-transform group-hover:scale-110"
+                    referrerPolicy="no-referrer"
+                  />
+                  <div className="absolute top-4 right-4 bg-white/90 backdrop-blur-sm px-3 py-1 rounded-full text-xs font-bold shadow-sm">
+                    Disponível
+                  </div>
+                </div>
+                <div className="p-6 text-center">
+                  <p className="font-bold text-xl">{variant.name}</p>
+                  <p className="text-sm text-gray-500 mt-1">Duo Head Exclusive</p>
+                </div>
+              </motion.div>
+            </div>
+          ))}
+        </div>
+      </div>
+      
+      {/* Navigation Buttons */}
+      <button 
+        onClick={scrollPrev}
+        className="absolute left-0 top-1/2 -translate-y-1/2 -translate-x-1/2 bg-white p-3 rounded-full shadow-xl z-10 hidden md:block hover:bg-gray-50 transition-colors border border-gray-100"
+      >
+        <ChevronRight className="rotate-180" size={24} />
+      </button>
+      <button 
+        onClick={scrollNext}
+        className="absolute right-0 top-1/2 -translate-y-1/2 translate-x-1/2 bg-white p-3 rounded-full shadow-xl z-10 hidden md:block hover:bg-gray-50 transition-colors border border-gray-100"
+      >
+        <ChevronRight size={24} />
+      </button>
+
+      {/* Progress Dots / Visual Indicator */}
+      <div className="flex justify-center gap-2 mt-8 md:hidden">
+        {ASSETS.IMAGES.VARIATIONS.map((_, i) => (
+          <div key={i} className="w-2 h-2 rounded-full bg-gray-300" />
+        ))}
+      </div>
+    </div>
+  );
+};
 
 const Button = ({ 
   children, 
@@ -330,43 +400,20 @@ export default function App() {
       {/* 8. VARIAÇÕES */}
       <Section className="bg-white">
         <SectionTitle>Escolha as suas cores</SectionTitle>
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-          {ASSETS.IMAGES.VARIATIONS.map((id, index) => (
-            <motion.div
-              key={index}
-              whileHover={{ y: -10 }}
-              className="group"
-            >
-              <div className="rounded-3xl overflow-hidden shadow-lg mb-6 bg-gray-50 relative">
-                <img 
-                  src={getDriveImageUrl(id)} 
-                  alt={`Variação ${index + 1}`} 
-                  className="w-full h-auto transition-transform group-hover:scale-110"
-                  referrerPolicy="no-referrer"
-                />
-                <div className="absolute top-4 right-4 bg-white/90 backdrop-blur-sm px-3 py-1 rounded-full text-xs font-bold shadow-sm">
-                  Disponível
-                </div>
-              </div>
-              <p className="text-center font-bold text-xl">Duo Head V{index + 1}</p>
-            </motion.div>
-          ))}
-        </div>
+        <VariationCarousel />
       </Section>
 
       {/* 9. VÍDEOS DE DEMONSTRAÇÃO */}
       <Section className="bg-[#111] text-white">
         <SectionTitle>Veja o Duo Head em ação</SectionTitle>
-        <div className="grid md:grid-cols-2 gap-8">
-          {[ASSETS.VIDEOS.SEC1, ASSETS.VIDEOS.SEC2].map((id, i) => (
-            <div key={i} className="aspect-video rounded-3xl overflow-hidden shadow-2xl bg-black border-4 border-white/10">
-              <iframe 
-                src={getDriveViewerUrl(id)} 
-                className="w-full h-full"
-                title={`Demonstração ${i + 1}`}
-              />
-            </div>
-          ))}
+        <div className="max-w-4xl mx-auto">
+          <div className="aspect-video rounded-3xl overflow-hidden shadow-2xl bg-black border-4 border-white/10">
+            <iframe 
+              src={getDriveViewerUrl(ASSETS.VIDEOS.SEC1)} 
+              className="w-full h-full"
+              title="Demonstração Duo Head"
+            />
+          </div>
         </div>
       </Section>
 

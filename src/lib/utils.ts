@@ -11,7 +11,7 @@ export const getDriveViewerUrl = (id: string) => `https://drive.google.com/file/
 
 export const ASSETS = {
   VIDEOS: {
-    HERO: '1uKGHh9xMUWcgbvhjf2bb7OK_TbJnWU5D',
+    HERO: '15RzKa3smvsyk_co7LxID7SuRARuzDDl0',
     SEC1: '16QKWib1xI0R0_SmUiYcQG2GFjxTtbmrR',
     SEC2: '1cs7tdebI9kbUuvOUefhZI5-yMmzvtLEu',
   },
@@ -30,9 +30,15 @@ export const ASSETS = {
     DIFFERENTIALS: '1D4_66cs0015_3g-jATZMHabVVtECYJS-',
     SOCIAL_PROOF: '11OXKSx3Rfa8fKv58JQcAdC267chsiSRB',
     VARIATIONS: [
-      '15ryUw3pIEII3Jyxv1BqAQeE8bvXGTPoB',
-      '1rkM1OLeWvDiqIMj4WvuGo3P_vaWUAjb_',
-      '1Uwu5yqCIS6QEa8MbLIOvWn58VjUfFfGI',
+      { name: 'Azul Claro', id: '15ryUw3pIEII3Jyxv1BqAQeE8bvXGTPoB' },
+      { name: 'Azul Royal', id: '1rkM1OLeWvDiqIMj4WvuGo3P_vaWUAjb_' },
+      { name: 'Laranja', id: '1Uwu5yqCIS6QEa8MbLIOvWn58VjUfFfGI' },
+      { name: 'Preto', id: '1wAUK00YYkwmdwv2BCW-6hxdreE4zGFsS' },
+      { name: 'Rosa', id: '1fxM22o9RyHa8EFwN2OoanKoHVkG3pZcj' },
+      { name: 'Verde Claro', id: '1HKKxh3HOfcbtMmL3r0dyEDehBj56r1g1' },
+      { name: 'Verde Escuro', id: '1XZsZBe4uRydfk1SE_XfnXWg2azxC_0cP' },
+      { name: 'Verde Limão', id: '1eoB2i4sFE6LXLMRgyvvIy55RJQVmRtJL' },
+      { name: 'Verde Militar', id: '1IjaxJAzEEsLtFmDIJGpEjiPRf4g5kGPh' },
     ],
   },
   LINKS: {
