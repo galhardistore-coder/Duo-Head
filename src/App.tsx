@@ -26,6 +26,59 @@ import { cn, ASSETS, getDriveImageUrl, getDriveViewerUrl } from './lib/utils';
 
 // --- Components ---
 
+const VideoPlayer = ({ src, title, className }: { src: string; title: string, className?: string }) => {
+  const [isVisible, setIsVisible] = React.useState(false);
+  const containerRef = React.useRef<HTMLDivElement>(null);
+
+  React.useEffect(() => {
+    const observer = new IntersectionObserver(
+      ([entry]) => {
+        // Only trigger once or every time it enters? 
+        // For sales pages, often once it enters we start it, but let's do "while in view" logic
+        if (entry.isIntersecting) {
+          setIsVisible(true);
+        }
+      },
+      { threshold: 0.3 }
+    );
+
+    const currentRef = containerRef.current;
+    if (currentRef) {
+      observer.observe(currentRef);
+    }
+
+    return () => {
+      if (currentRef) observer.unobserve(currentRef);
+    };
+  }, []);
+
+  return (
+    <div 
+      ref={containerRef}
+      className={cn(
+        "w-full max-w-[340px] mx-auto aspect-[9/16] rounded-[2.5rem] overflow-hidden shadow-2xl bg-black border-4 border-white/20 relative",
+        className
+      )}
+    >
+      {isVisible ? (
+        <iframe 
+          src={`${src}?autoplay=1&mute=1`} 
+          className="w-full h-full"
+          title={title}
+          allow="autoplay; encrypted-media"
+          referrerPolicy="no-referrer"
+        />
+      ) : (
+        <div className="w-full h-full flex items-center justify-center bg-gray-900 group cursor-pointer">
+          <div className="bg-white/20 p-6 rounded-full backdrop-blur-sm group-hover:scale-110 transition-transform">
+            <Play className="text-white fill-white" size={40} />
+          </div>
+        </div>
+      )}
+    </div>
+  );
+};
+
 const CountdownTimer = () => {
   const [timeLeft, setTimeLeft] = useState(600); // 10 minutes in seconds
 
@@ -235,7 +288,7 @@ export default function App() {
               O SUPORTE DUPLO DUO HEAD é o acessório revolucionário em impressão 3D que permite alcançar todas as áreas sozinho, garantindo um resultado de barbeiro em casa.
             </p>
             
-            <div className="flex flex-col sm:flex-row gap-4 mb-12 justify-center">
+            <div className="flex flex-col sm:flex-row gap-4 mb-16 justify-center">
               <Button href={ASSETS.LINKS.SHOPEE} variant="primary" className="w-full sm:w-auto">
                 <ShoppingBag size={20} /> Comprar agora
               </Button>
@@ -245,18 +298,17 @@ export default function App() {
             </div>
           </motion.div>
 
-          {/* Hero Video */}
+          {/* Hero Video - Vertical & Autoplay */}
           <motion.div 
             initial={{ opacity: 0, scale: 0.95 }}
             animate={{ opacity: 1, scale: 1 }}
             transition={{ delay: 0.3, duration: 0.8 }}
-            className="w-full max-w-4xl aspect-[16/9] rounded-2xl overflow-hidden shadow-2xl bg-black border-8 border-white"
+            className="w-full"
           >
-            <iframe 
+            <VideoPlayer 
               src={getDriveViewerUrl(ASSETS.VIDEOS.HERO)} 
-              className="w-full h-full"
-              allow="autoplay"
               title="Apresentação Duo Head"
+              className="border-8 border-white shadow-[0_20px_50px_rgba(0,0,0,0.2)]"
             />
           </motion.div>
         </div>
@@ -443,14 +495,16 @@ export default function App() {
       {/* 9. VÍDEOS DE DEMONSTRAÇÃO */}
       <Section className="bg-[#111] text-white">
         <SectionTitle>Veja o Duo Head em ação</SectionTitle>
-        <div className="max-w-4xl mx-auto">
-          <div className="aspect-video rounded-3xl overflow-hidden shadow-2xl bg-black border-4 border-white/10">
-            <iframe 
-              src={getDriveViewerUrl(ASSETS.VIDEOS.SEC1)} 
-              className="w-full h-full"
-              title="Demonstração Duo Head"
-            />
-          </div>
+        <div className="max-w-6xl mx-auto grid md:grid-cols-2 gap-12">
+          <VideoPlayer 
+            src={getDriveViewerUrl(ASSETS.VIDEOS.SEC1)} 
+            title="Demonstração Prática 1"
+          />
+          <VideoPlayer 
+            src={getDriveViewerUrl(ASSETS.VIDEOS.SEC2)} 
+            title="Demonstração Prática 2"
+            className="hidden md:block" // Optional: show second one only on bigger screens or both
+          />
         </div>
       </Section>
 
