@@ -28,7 +28,6 @@ import { cn, ASSETS, getDriveImageUrl, getDriveViewerUrl } from './lib/utils';
 
 const VideoPlayer = ({ srcId, title, className }: { srcId: string; title: string, className?: string }) => {
   const [isVisible, setIsVisible] = React.useState(false);
-  const videoRef = React.useRef<HTMLVideoElement>(null);
   const containerRef = React.useRef<HTMLDivElement>(null);
 
   React.useEffect(() => {
@@ -51,9 +50,6 @@ const VideoPlayer = ({ srcId, title, className }: { srcId: string; title: string
     };
   }, []);
 
-  // Use the direct download/stream link for native video tag
-  const videoSrc = `https://drive.google.com/uc?export=download&id=${srcId}`;
-
   return (
     <div 
       ref={containerRef}
@@ -62,21 +58,23 @@ const VideoPlayer = ({ srcId, title, className }: { srcId: string; title: string
         className
       )}
     >
+      {/* Interaction Shield: Prevents user from clicking and seeing Google UI */}
+      <div className="absolute inset-x-0 inset-y-12 z-10 bg-transparent cursor-default" />
+      
       {isVisible ? (
-        <video
-          ref={videoRef}
-          src={videoSrc}
-          title={title}
-          autoPlay
-          muted
-          loop
-          playsInline
-          className="w-full h-full object-cover"
-        />
+        <div className="w-full h-full scale-[1.3] origin-center">
+          <iframe 
+            src={`https://drive.google.com/file/d/${srcId}/preview?autoplay=1&mute=1`} 
+            className="w-full h-full border-none shadow-none"
+            title={title}
+            allow="autoplay; encrypted-media"
+            referrerPolicy="no-referrer"
+          />
+        </div>
       ) : (
-        <div className="w-full h-full flex items-center justify-center bg-gray-900">
+        <div className="w-full h-full flex items-center justify-center bg-gray-900 group cursor-pointer">
           <div className="bg-white/10 p-6 rounded-full backdrop-blur-sm animate-pulse">
-            <Play className="text-white/20" size={40} />
+            <Play className="text-white/20 fill-white" size={40} />
           </div>
         </div>
       )}
