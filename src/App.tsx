@@ -26,20 +26,19 @@ import { cn, ASSETS, getDriveImageUrl, getDriveViewerUrl } from './lib/utils';
 
 // --- Components ---
 
-const VideoPlayer = ({ src, title, className }: { src: string; title: string, className?: string }) => {
+const VideoPlayer = ({ srcId, title, className }: { srcId: string; title: string, className?: string }) => {
   const [isVisible, setIsVisible] = React.useState(false);
+  const videoRef = React.useRef<HTMLVideoElement>(null);
   const containerRef = React.useRef<HTMLDivElement>(null);
 
   React.useEffect(() => {
     const observer = new IntersectionObserver(
       ([entry]) => {
-        // Only trigger once or every time it enters? 
-        // For sales pages, often once it enters we start it, but let's do "while in view" logic
         if (entry.isIntersecting) {
           setIsVisible(true);
         }
       },
-      { threshold: 0.3 }
+      { threshold: 0.1 }
     );
 
     const currentRef = containerRef.current;
@@ -52,6 +51,9 @@ const VideoPlayer = ({ src, title, className }: { src: string; title: string, cl
     };
   }, []);
 
+  // Use the direct download/stream link for native video tag
+  const videoSrc = `https://drive.google.com/uc?export=download&id=${srcId}`;
+
   return (
     <div 
       ref={containerRef}
@@ -61,17 +63,20 @@ const VideoPlayer = ({ src, title, className }: { src: string; title: string, cl
       )}
     >
       {isVisible ? (
-        <iframe 
-          src={`${src}?autoplay=1&mute=1`} 
-          className="w-full h-full"
+        <video
+          ref={videoRef}
+          src={videoSrc}
           title={title}
-          allow="autoplay; encrypted-media"
-          referrerPolicy="no-referrer"
+          autoPlay
+          muted
+          loop
+          playsInline
+          className="w-full h-full object-cover"
         />
       ) : (
-        <div className="w-full h-full flex items-center justify-center bg-gray-900 group cursor-pointer">
-          <div className="bg-white/20 p-6 rounded-full backdrop-blur-sm group-hover:scale-110 transition-transform">
-            <Play className="text-white fill-white" size={40} />
+        <div className="w-full h-full flex items-center justify-center bg-gray-900">
+          <div className="bg-white/10 p-6 rounded-full backdrop-blur-sm animate-pulse">
+            <Play className="text-white/20" size={40} />
           </div>
         </div>
       )}
@@ -306,7 +311,7 @@ export default function App() {
             className="w-full"
           >
             <VideoPlayer 
-              src={getDriveViewerUrl(ASSETS.VIDEOS.HERO)} 
+              srcId={ASSETS.VIDEOS.HERO} 
               title="Apresentação Duo Head"
               className="border-8 border-white shadow-[0_20px_50px_rgba(0,0,0,0.2)]"
             />
@@ -497,11 +502,11 @@ export default function App() {
         <SectionTitle>Veja o Duo Head em ação</SectionTitle>
         <div className="max-w-6xl mx-auto grid md:grid-cols-2 gap-12">
           <VideoPlayer 
-            src={getDriveViewerUrl(ASSETS.VIDEOS.SEC1)} 
+            srcId={ASSETS.VIDEOS.SEC1} 
             title="Demonstração Prática 1"
           />
           <VideoPlayer 
-            src={getDriveViewerUrl(ASSETS.VIDEOS.SEC2)} 
+            srcId={ASSETS.VIDEOS.SEC2} 
             title="Demonstração Prática 2"
             className="hidden md:block" // Optional: show second one only on bigger screens or both
           />
