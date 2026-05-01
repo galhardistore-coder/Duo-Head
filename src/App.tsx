@@ -41,36 +41,29 @@ const VideoPlayer = ({ srcId, title, className }: { srcId: string; title: string
     );
 
     const currentRef = containerRef.current;
-    if (currentRef) {
-      observer.observe(currentRef);
-    }
-
-    return () => {
-      if (currentRef) observer.unobserve(currentRef);
-    };
+    if (currentRef) observer.observe(currentRef);
+    return () => { if (currentRef) observer.unobserve(currentRef); };
   }, []);
 
   return (
     <div 
       ref={containerRef}
       className={cn(
-        "w-full max-w-[340px] mx-auto aspect-[9/16] rounded-[2.5rem] overflow-hidden shadow-2xl bg-black border-4 border-white/20 relative",
+        "w-full max-w-[320px] mx-auto aspect-[9/16] rounded-[2rem] overflow-hidden shadow-2xl bg-black border-4 border-white/20 relative",
         className
       )}
     >
-      {/* Interaction Shield: Prevents user from clicking and seeing Google UI */}
-      <div className="absolute inset-x-0 inset-y-12 z-10 bg-transparent cursor-default" />
+      {/* Interaction Shield: Prevents accidental navigation while keeping basic controls accessible if needed */}
+      <div className="absolute inset-0 z-10 bg-transparent pointer-events-none" />
       
       {isVisible ? (
-        <div className="w-full h-full scale-[1.3] origin-center">
-          <iframe 
-            src={`https://drive.google.com/file/d/${srcId}/preview?autoplay=1&mute=1`} 
-            className="w-full h-full border-none shadow-none"
-            title={title}
-            allow="autoplay; encrypted-media"
-            referrerPolicy="no-referrer"
-          />
-        </div>
+        <iframe 
+          src={`https://drive.google.com/file/d/${srcId}/preview`} 
+          className="w-full h-full border-none shadow-none scale-[1.2] origin-center"
+          title={title}
+          allow="autoplay; encrypted-media"
+          referrerPolicy="no-referrer"
+        />
       ) : (
         <div className="w-full h-full flex items-center justify-center bg-gray-900 group cursor-pointer">
           <div className="bg-white/10 p-6 rounded-full backdrop-blur-sm animate-pulse">
@@ -498,15 +491,10 @@ export default function App() {
       {/* 9. VÍDEOS DE DEMONSTRAÇÃO */}
       <Section className="bg-[#111] text-white">
         <SectionTitle>Veja o Duo Head em ação</SectionTitle>
-        <div className="max-w-6xl mx-auto grid md:grid-cols-2 gap-12">
+        <div className="max-w-4xl mx-auto">
           <VideoPlayer 
             srcId={ASSETS.VIDEOS.SEC1} 
-            title="Demonstração Prática 1"
-          />
-          <VideoPlayer 
-            srcId={ASSETS.VIDEOS.SEC2} 
-            title="Demonstração Prática 2"
-            className="hidden md:block" // Optional: show second one only on bigger screens or both
+            title="Demonstração Prática"
           />
         </div>
       </Section>
