@@ -95,16 +95,16 @@ const CountdownTimer = () => {
   };
 
   return (
-    <div className="fixed top-0 left-0 right-0 z-[60] bg-black/90 backdrop-blur-sm py-2 px-4 border-b border-white/10 flex items-center justify-center gap-3 shadow-xl">
+    <div className="fixed top-0 left-0 right-0 z-[60] bg-br-green py-2 px-4 border-b border-br-yellow/30 flex items-center justify-center gap-3 shadow-xl">
       <div className="flex items-center gap-2">
-        <Clock size={16} className="text-[#25D366] animate-pulse" />
+        <Clock size={16} className="text-br-yellow animate-pulse" />
         <p className="text-white text-[10px] md:text-sm font-bold uppercase tracking-widest">
-          Oferta Especial termina em:
+          Oferta de Lançamento termina em:
         </p>
       </div>
       <div className={cn(
         "text-xl md:text-2xl font-mono font-black tabular-nums min-w-[70px] text-center",
-        timeLeft < 60 ? "text-red-500 animate-pulse" : "text-[#25D366]"
+        timeLeft < 60 ? "text-red-400 animate-pulse" : "text-br-yellow"
       )}>
         {formatTime(timeLeft)}
       </div>
@@ -130,30 +130,56 @@ const VariationCarousel = () => {
     <div className="relative group">
       <div className="overflow-hidden" ref={emblaRef}>
         <div className="flex -ml-4">
-          {ASSETS.IMAGES.VARIATIONS.map((variant, index) => (
-            <div key={index} className="flex-[0_0_100%] min-w-0 pl-4 md:flex-[0_0_50%] lg:flex-[0_0_33.33%]">
-              <motion.div
-                whileHover={{ y: -10 }}
-                className="bg-gray-50 rounded-3xl overflow-hidden shadow-lg h-full border border-gray-100"
-              >
-                <div className="aspect-square relative overflow-hidden">
-                  <img 
-                    src={getDriveImageUrl(variant.id)} 
-                    alt={variant.name} 
-                    className="w-full h-full object-cover transition-transform group-hover:scale-110"
-                    referrerPolicy="no-referrer"
-                  />
-                  <div className="absolute top-4 right-4 bg-white/90 backdrop-blur-sm px-3 py-1 rounded-full text-xs font-bold shadow-sm">
-                    Disponível
+          {ASSETS.IMAGES.VARIATIONS.map((variant, index) => {
+            const isBrasil = variant.name.startsWith('Brasil');
+            return (
+              <div key={index} className="flex-[0_0_100%] min-w-0 pl-4 md:flex-[0_0_50%] lg:flex-[0_0_33.33%] py-10">
+                <motion.div
+                  whileHover={{ y: -15, scale: 1.02 }}
+                  className={cn(
+                    "rounded-3xl overflow-hidden shadow-lg h-full border transition-all duration-300",
+                    isBrasil 
+                      ? "bg-white border-br-yellow ring-4 ring-br-yellow/20 shadow-br-yellow/10" 
+                      : "bg-gray-50 border-gray-100"
+                  )}
+                >
+                  <div className="aspect-square relative overflow-hidden">
+                    <img 
+                      src={getDriveImageUrl(variant.id)} 
+                      alt={variant.name} 
+                      className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110"
+                      referrerPolicy="no-referrer"
+                    />
+                    {isBrasil ? (
+                      <div className="absolute top-4 left-4 bg-br-yellow text-br-blue px-4 py-2 rounded-full text-xs font-black shadow-lg flex items-center gap-1">
+                        <span className="text-sm">🇧🇷</span> EDIÇÃO ESPECIAL
+                      </div>
+                    ) : (
+                      <div className="absolute top-4 right-4 bg-white/90 backdrop-blur-sm px-3 py-1 rounded-full text-xs font-bold shadow-sm text-gray-800">
+                        Disponível
+                      </div>
+                    )}
                   </div>
-                </div>
-                <div className="p-6 text-center">
-                  <p className="font-bold text-xl">{variant.name}</p>
-                  <p className="text-sm text-gray-500 mt-1">Duo Head Exclusive</p>
-                </div>
-              </motion.div>
-            </div>
-          ))}
+                  <div className="p-8 text-center bg-white">
+                    <p className={cn(
+                      "font-black text-2xl uppercase tracking-tighter",
+                      isBrasil ? "text-br-green" : "text-[#111]"
+                    )}>{variant.name}</p>
+                    <p className="text-sm text-gray-500 mt-2 font-medium">
+                      {isBrasil ? 'O Orgulho Brasileiro em suas Mãos' : 'Duo Head Exclusive Design'}
+                    </p>
+                    {isBrasil && (
+                      <div className="mt-4 flex justify-center gap-1">
+                        <div className="w-8 h-2 rounded-full bg-br-green" />
+                        <div className="w-8 h-2 rounded-full bg-br-yellow" />
+                        <div className="w-8 h-2 rounded-full bg-br-blue" />
+                      </div>
+                    )}
+                  </div>
+                </motion.div>
+              </div>
+            );
+          })}
         </div>
       </div>
       
@@ -190,16 +216,17 @@ const Button = ({
 }: { 
   children: React.ReactNode; 
   className?: string; 
-  variant?: 'primary' | 'whatsapp' | 'outline' | 'secondary';
+  variant?: 'primary' | 'whatsapp' | 'outline' | 'secondary' | 'yellow';
   onClick?: () => void;
   href?: string;
 }) => {
-  const baseStyles = "px-8 py-4 rounded-xl font-bold transition-all flex items-center justify-center gap-2 active:scale-95 text-lg shadow-lg";
+  const baseStyles = "px-8 py-5 rounded-2xl font-black transition-all flex items-center justify-center gap-2 active:scale-95 text-lg shadow-xl uppercase tracking-tight";
   const variants = {
-    primary: "bg-[#111] text-white hover:bg-black",
-    whatsapp: "bg-[#25D366] text-white hover:bg-[#21b558]",
-    secondary: "bg-[#007BFF] text-white hover:bg-[#0069d9]",
-    outline: "border-2 border-[#111] text-[#111] hover:bg-[#111] hover:text-white"
+    primary: "bg-br-green text-white hover:bg-br-green-dark shadow-br-green/20",
+    yellow: "bg-br-yellow text-br-blue hover:bg-[#ebcd00] shadow-br-yellow/20",
+    whatsapp: "bg-[#25D366] text-white hover:bg-[#21b558] shadow-green-500/20",
+    secondary: "bg-br-blue text-white hover:bg-blue-900 shadow-br-blue/20",
+    outline: "border-3 border-br-green text-br-green hover:bg-br-green hover:text-white"
   };
 
   const Content = () => <>{children}</>;
@@ -220,15 +247,19 @@ const Button = ({
 };
 
 const Section = ({ children, className, id, dark = false }: { children: React.ReactNode; className?: string; id?: string; dark?: boolean }) => (
-  <section id={id} className={cn("py-20 px-6", dark ? "bg-[#111] text-white" : "bg-transparent", className)}>
+  <section id={id} className={cn("py-24 px-6", dark ? "bg-br-blue text-white" : "bg-transparent", className)}>
     <div className="max-w-6xl mx-auto">
       {children}
     </div>
   </section>
 );
 
-const SectionTitle = ({ children, centered = true }: { children: React.ReactNode; centered?: boolean }) => (
-  <h2 className={cn("text-3xl md:text-5xl font-bold mb-12 tracking-tight", centered && "text-center")}>
+const SectionTitle = ({ children, centered = true, dark = false }: { children: React.ReactNode; centered?: boolean; dark?: boolean }) => (
+  <h2 className={cn(
+    "text-4xl md:text-6xl font-black mb-16 tracking-tighter uppercase italic leading-[1]", 
+    centered && "text-center",
+    dark ? "text-br-yellow" : "text-br-blue"
+  )}>
     {children}
   </h2>
 );
@@ -245,53 +276,58 @@ export default function App() {
   }, []);
 
   return (
-    <div className="min-h-screen bg-[#F5F5F5] text-[#111] font-sans overflow-x-hidden">
+    <div className="min-h-screen bg-[#FDFCF0] text-br-blue font-sans overflow-x-hidden">
       
       <CountdownTimer />
       
       {/* Header / Nav */}
       <nav className={cn(
         "fixed top-12 left-0 right-0 z-50 transition-all duration-300 py-4 px-6 flex justify-between items-center",
-        isScrolled ? "bg-white/90 backdrop-blur-md shadow-sm" : "bg-transparent"
+        isScrolled ? "bg-white/95 backdrop-blur-md shadow-lg border-b border-br-green/10" : "bg-transparent"
       )}>
         <div className="flex items-center gap-2">
-          <div className="w-10 h-10 bg-black rounded-lg flex items-center justify-center">
-            <span className="text-white font-black text-xl">D</span>
+          <div className="w-12 h-12 bg-br-green rounded-xl flex items-center justify-center shadow-lg shadow-br-green/20 rotate-3">
+            <span className="text-br-yellow font-black text-2xl drop-shadow-sm">D</span>
           </div>
-          <span className="font-black text-2xl tracking-tighter">DUO HEAD</span>
+          <div className="flex flex-col -gap-1">
+            <span className="font-black text-2xl tracking-tighter leading-none text-br-green">DUO HEAD</span>
+            <span className="text-[10px] font-bold tracking-[0.2em] text-br-blue uppercase">Brasil Edition</span>
+          </div>
         </div>
         <div className="hidden md:flex gap-4">
-          <Button href={ASSETS.LINKS.WHATSAPP} variant="outline" className="px-5 py-2 text-sm shadow-none">
+          <Button href={ASSETS.LINKS.WHATSAPP} variant="outline" className="px-6 py-2.5 text-xs shadow-none border-2">
             Falar no WhatsApp
           </Button>
         </div>
       </nav>
 
       {/* 1. HERO */}
-      <section className="pt-48 pb-16 px-6 relative overflow-hidden">
-        <div className="max-w-6xl mx-auto flex flex-col items-center text-center">
+      <section className="pt-56 pb-24 px-6 relative overflow-hidden">
+        {/* Brazilian Flag Inspired Background Elements */}
+        <div className="absolute top-0 right-0 -translate-y-1/2 translate-x-1/4 w-[600px] h-[600px] bg-br-green/5 rounded-full blur-[100px]" />
+        <div className="absolute bottom-0 left-0 translate-y-1/2 -translate-x-1/4 w-[500px] h-[500px] bg-br-yellow/10 rounded-full blur-[100px]" />
+        
+        <div className="max-w-6xl mx-auto flex flex-col items-center text-center relative z-10">
           <motion.div
-            initial={{ opacity: 0, y: 20 }}
+            initial={{ opacity: 0, y: 30 }}
             animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.6 }}
+            transition={{ duration: 0.8, ease: "easeOut" }}
           >
-            <span className="inline-block bg-[#111] text-white text-xs font-bold px-3 py-1 rounded-full mb-6 tracking-widest uppercase">
-              Inovação no Brasil 🇧🇷
+            <span className="inline-flex items-center gap-2 bg-br-green text-br-yellow text-xs font-black px-4 py-2 rounded-full mb-8 tracking-[0.2em] uppercase shadow-lg shadow-br-green/20">
+              <span className="text-base">🇧🇷</span> Orgulho Nacional
             </span>
-            <h1 className="text-4xl md:text-7xl font-black mb-6 leading-[1.1] tracking-tight">
-              Raspe sua cabeça com <br />
-              <span className="text-[#25D366]">perfeição e autonomia</span>
+            <h1 className="text-5xl md:text-8xl font-black mb-8 leading-[0.95] tracking-tighter uppercase italic">
+              O Suporte <br />
+              <span className="text-br-green">Mais Vendido</span> <br />
+              <span className="text-br-yellow bg-br-blue px-4 inline-block mt-2">Do Brasil</span>
             </h1>
-            <p className="text-xl md:text-2xl text-gray-600 mb-10 max-w-2xl mx-auto">
-              O SUPORTE DUPLO DUO HEAD é o acessório revolucionário em impressão 3D que permite alcançar todas as áreas sozinho, garantindo um resultado de barbeiro em casa.
+            <p className="text-xl md:text-2xl text-br-blue/70 mb-12 max-w-2xl mx-auto font-medium">
+              Autonomia total para raspar a cabeça com perfeição. O <span className="font-bold text-br-green decoration-br-yellow decoration-2 underline-offset-4 underline">Duo Head</span> é a inovação que o brasileiro precisava.
             </p>
             
-            <div className="flex flex-col sm:flex-row gap-4 mb-16 justify-center">
-              <Button href={ASSETS.LINKS.SHOPEE} variant="primary" className="w-full sm:w-auto">
-                <ShoppingBag size={20} /> Comprar agora
-              </Button>
-              <Button href={ASSETS.LINKS.WHATSAPP} variant="whatsapp" className="w-full sm:w-auto">
-                <MessageCircle size={20} /> Comprar no WhatsApp
+            <div className="flex flex-col sm:flex-row gap-5 mb-20 justify-center">
+              <Button href="#precos" variant="yellow" className="w-full sm:w-auto min-w-[320px]">
+                <ShoppingBag size={22} strokeWidth={3} /> Aproveitar Oferta
               </Button>
             </div>
           </motion.div>
@@ -314,22 +350,22 @@ export default function App() {
 
       {/* 2. GALERIA VISUAL */}
       <Section className="bg-white">
-        <SectionTitle>Design funcional para o seu dia a dia</SectionTitle>
-        <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+        <SectionTitle>Design <span className="text-br-green">Premium</span> para Resultados Fodásticos</SectionTitle>
+        <div className="grid grid-cols-2 md:grid-cols-4 gap-6">
           {ASSETS.IMAGES.GALLERY.map((id, index) => (
             <motion.div
               key={index}
-              whileHover={{ scale: 1.02 }}
+              whileHover={{ scale: 1.05, rotate: index % 2 === 0 ? 2 : -2 }}
               initial={{ opacity: 0, y: 20 }}
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true }}
               transition={{ delay: index * 0.1 }}
-              className="aspect-square rounded-2xl overflow-hidden shadow-md"
+              className="aspect-square rounded-3xl overflow-hidden shadow-xl border-4 border-br-green/5 bg-gray-50"
             >
               <img 
                 src={getDriveImageUrl(id)} 
                 alt="Duo Head em uso" 
-                className="w-full h-full object-cover"
+                className="w-full h-full object-cover transition-transform hover:scale-110"
                 referrerPolicy="no-referrer"
               />
             </motion.div>
@@ -338,45 +374,46 @@ export default function App() {
       </Section>
 
       {/* 3. PROBLEMA vs 4. SOLUÇÃO */}
-      <Section className="bg-[#111] text-white">
-        <div className="grid md:grid-cols-2 gap-16 items-center">
+      <Section dark className="relative overflow-hidden">
+        <div className="absolute top-0 left-0 w-full h-full bg-br-blue opacity-50 z-0" />
+        <div className="grid md:grid-cols-2 gap-16 items-center relative z-10">
           <div>
-            <span className="text-[#007BFF] font-bold mb-4 block">Cansado de depender de outras pessoas?</span>
-            <h2 className="text-3xl md:text-5xl font-bold mb-8">A dificuldade de raspar a própria cabeça acabou.</h2>
-            <ul className="space-y-6">
+            <span className="text-br-yellow font-black mb-4 block uppercase tracking-widest">Chega de sofrer sozinho</span>
+            <h2 className="text-4xl md:text-6xl font-black mb-10 leading-tight italic uppercase text-white">Por que continuar dependendo dos outros?</h2>
+            <ul className="space-y-8">
               {[
-                "Dificuldade para raspar a parte de trás",
-                "Dependência de outra pessoa ou do barbeiro",
-                "Resultado falhado e com falhas visíveis",
-                "Gasto frequente e desnecessário",
-                "Falta de praticidade no seu tempo"
+                "Dificuldade total na parte de trás",
+                "Gasto excessivo com barbeiros",
+                "Cortes mal acabados e falhos",
+                "Falta de tempo para ir ao salão",
+                "Dependência de ajuda para o básico"
               ].map((item, i) => (
-                <li key={i} className="flex gap-4 items-start">
-                  <div className="mt-1 text-red-500 bg-red-500/10 p-1 rounded-full">
-                    <X size={16} />
+                <li key={i} className="flex gap-5 items-center">
+                  <div className="flex-shrink-0 bg-red-500 text-white p-1 rounded-full shadow-lg shadow-red-500/20">
+                    <X size={20} strokeWidth={3} />
                   </div>
-                  <span className="text-xl text-gray-400">{item}</span>
+                  <span className="text-xl md:text-2xl text-white/80 font-medium">{item}</span>
                 </li>
               ))}
             </ul>
           </div>
           <div className="relative">
-            <div className="absolute inset-0 bg-gradient-to-tr from-[#25D366]/20 to-transparent rounded-3xl blur-2xl" />
+            <div className="absolute inset-0 bg-gradient-to-tr from-br-yellow/30 to-transparent rounded-[3rem] blur-3xl" />
             <motion.div 
-              initial={{ opacity: 0, x: 20 }}
-              whileInView={{ opacity: 1, x: 0 }}
+              initial={{ opacity: 0, scale: 0.9 }}
+              whileInView={{ opacity: 1, scale: 1 }}
               viewport={{ once: true }}
-              className="relative rounded-3xl overflow-hidden shadow-2xl border-2 border-white/10"
+              className="relative rounded-[3rem] overflow-hidden shadow-[0_30px_60px_rgba(0,0,0,0.5)] border-4 border-white/10"
             >
                <img 
                 src={getDriveImageUrl(ASSETS.IMAGES.PRODUCT)} 
                 alt="Solução Duo Head" 
-                className="w-full h-auto"
+                className="w-full h-auto brightness-110"
                 referrerPolicy="no-referrer"
               />
-              <div className="absolute bottom-0 left-0 right-0 p-8 bg-gradient-to-t from-black/80 to-transparent">
-                <p className="text-[#25D366] font-bold text-2xl">Conheça o DUO HEAD</p>
-                <p className="text-gray-300">A peça que faltava para sua autonomia.</p>
+              <div className="absolute bottom-0 left-0 right-0 p-10 bg-gradient-to-t from-br-blue to-transparent">
+                <p className="text-br-yellow font-black text-3xl uppercase italic leading-none mb-1">Duo Head Brasil</p>
+                <p className="text-white/70 font-bold uppercase tracking-widest text-sm">Sua liberdade começa aqui</p>
               </div>
             </motion.div>
           </div>
@@ -384,30 +421,30 @@ export default function App() {
       </Section>
 
       {/* 5. BENEFÍCIOS */}
-      <Section id="beneficios">
-        <SectionTitle>Por que escolher o <span className="text-[#25D366]">Duo Head?</span></SectionTitle>
-        <div className="grid md:grid-cols-3 gap-8">
+      <Section id="beneficios" className="bg-[#f0f9f3]">
+        <SectionTitle>O que o <span className="text-br-green">Brasil</span> já sabe:</SectionTitle>
+        <div className="grid md:grid-cols-3 gap-10">
           {[
-            { title: "Autonomia Total", icon: <ShieldCheck size={32} />, desc: "Não dependa de ninguém para cuidar da sua imagem." },
-            { title: "Economia Real", icon: <TrendingUp size={32} />, desc: "Pague uma vez e economize centenas de reais em barbeiros." },
-            { title: "Alcança Tudo", icon: <CheckCircle2 size={32} />, desc: "Chega nas áreas mais difíceis com controle absoluto." },
-            { title: "Praticidade", icon: <Clock size={32} />, desc: "Fique pronto em minutos, no conforto da sua casa." },
-            { title: "Resultado Uniforme", icon: <UserCheck size={32} />, desc: "Corte profissional, sem falhas e sem stress." },
-            { title: "Compacto", icon: <Smartphone size={32} />, desc: "Design inteligente que cabe em qualquer lugar." }
+            { title: "Independência", icon: <ShieldCheck size={36} />, desc: "Seja o seu próprio barbeiro com precisão absoluta." },
+            { title: "Mais Reais no Bolso", icon: <TrendingUp size={36} />, desc: "Economia garantida todos os meses." },
+            { title: "Alcança Tudo", icon: <CheckCircle2 size={36} />, desc: "Guia inteligente que atinge cada ângulo." },
+            { title: "Pronto em Minutos", icon: <Clock size={36} />, desc: "Agilidade total para o homem moderno." },
+            { title: "Corte Profissional", icon: <UserCheck size={36} />, desc: "Acabamento de luxo sem sair de casa." },
+            { title: "Made in Brasil", icon: <Package size={36} />, desc: "Orgulho e qualidade nacional reconhecida." }
           ].map((benefit, i) => (
             <motion.div
               key={i}
-              initial={{ opacity: 0, y: 20 }}
+              initial={{ opacity: 0, y: 30 }}
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true }}
               transition={{ delay: i * 0.1 }}
-              className="bg-white p-8 rounded-3xl shadow-sm hover:shadow-xl transition-shadow border border-gray-100"
+              className="bg-white p-10 rounded-[2.5rem] shadow-xl shadow-br-green/5 hover:shadow-br-green/10 transition-all border border-br-green/5 group"
             >
-              <div className="text-[#25D366] mb-6 inline-block p-4 bg-[#25D366]/10 rounded-2xl">
+              <div className="text-br-green mb-8 inline-block p-5 bg-br-green/10 rounded-[1.5rem] group-hover:scale-110 transition-transform">
                 {benefit.icon}
               </div>
-              <h3 className="text-2xl font-bold mb-4">{benefit.title}</h3>
-              <p className="text-gray-600 text-lg leading-relaxed">{benefit.desc}</p>
+              <h3 className="text-2xl font-black mb-4 uppercase italic tracking-tight text-br-blue">{benefit.title}</h3>
+              <p className="text-br-blue/60 text-lg leading-relaxed font-medium">{benefit.desc}</p>
             </motion.div>
           ))}
         </div>
@@ -415,12 +452,12 @@ export default function App() {
 
       {/* 6. DIFERENCIAIS */}
       <Section className="bg-white overflow-hidden">
-        <div className="grid md:grid-cols-2 gap-12 items-center">
+        <div className="grid md:grid-cols-2 gap-16 items-center">
           <motion.div
-            initial={{ opacity: 0, x: -20 }}
+            initial={{ opacity: 0, x: -30 }}
             whileInView={{ opacity: 1, x: 0 }}
             viewport={{ once: true }}
-            className="rounded-3xl overflow-hidden shadow-2xl"
+            className="rounded-[3rem] overflow-hidden shadow-2xl border-8 border-br-yellow/20"
           >
             <img 
               src={getDriveImageUrl(ASSETS.IMAGES.DIFFERENTIALS)} 
@@ -430,22 +467,22 @@ export default function App() {
             />
           </motion.div>
           <div>
-            <SectionTitle centered={false}>O que nos torna <br /><span className="text-[#007BFF]">exclusivos?</span></SectionTitle>
-            <div className="space-y-6">
+            <SectionTitle centered={false}>O que nos torna <br /><span className="text-br-green">Incomparáveis?</span></SectionTitle>
+            <div className="space-y-4">
               {[
-                { label: "Fabricação", value: "Impressão 3D de Alta Resistência" },
-                { label: "Disponibilidade", value: "Estoque no Brasil para Entrega Rápida" },
-                { label: "Entrega em mãos", value: "Opção de retirada direta com o vendedor" },
-                { label: "Atendimento", value: "Personalizado via WhatsApp" },
-                { label: "Design", value: "Focado em ergonomia e durabilidade" }
+                { label: "Tecnologia", value: "Impressão 3D de Nível Industrial" },
+                { label: "Logística", value: "Estoque no ABC e Envio Expresso" },
+                { label: "Suporte", value: "Atendimento VIP 100% Brasileiro" },
+                { label: "Confiança", value: "Garantia de Satisfação Duo Head" },
+                { label: "Versatilidade", value: "Compatível com as Melhores Lâminas" }
               ].map((item, i) => (
-                <div key={i} className="flex gap-4 items-center p-4 bg-[#F5F5F5] rounded-xl">
-                  <div className="bg-white p-2 rounded-lg shadow-sm">
-                    <CheckCircle2 size={20} className="text-[#25D366]" />
+                <div key={i} className="flex gap-5 items-center p-5 bg-[#f0f9f3] rounded-2xl border border-br-green/5 hover:border-br-green/20 transition-colors">
+                  <div className="bg-white p-3 rounded-xl shadow-md">
+                    <CheckCircle2 size={24} className="text-br-green" strokeWidth={3} />
                   </div>
                   <div>
-                    <p className="text-sm text-gray-500 uppercase font-bold tracking-wider">{item.label}</p>
-                    <p className="text-lg font-bold">{item.value}</p>
+                    <p className="text-[10px] text-br-green uppercase font-black tracking-widest leading-none mb-1">{item.label}</p>
+                    <p className="text-xl font-bold text-br-blue">{item.value}</p>
                   </div>
                 </div>
               ))}
@@ -455,29 +492,30 @@ export default function App() {
       </Section>
 
       {/* 7. PROVA SOCIAL */}
-      <Section className="bg-[#f8f9fa]">
-        <SectionTitle>Quem usa, aprova!</SectionTitle>
-        <div className="grid md:grid-cols-2 gap-8 items-center">
-          <div className="space-y-8">
-            <div className="bg-white p-8 rounded-3xl shadow-sm relative border-l-8 border-[#25D366]">
-              <p className="text-xl italic mb-6">"Mudou minha rotina. Antes eu tinha medo de raspar sozinho e ficar buracos, agora o Duo Head faz o guia perfeito. Economizo muito com barbeiro."</p>
-              <div className="flex items-center gap-4">
-                <div className="w-12 h-12 bg-gray-200 rounded-full flex items-center justify-center font-bold">R</div>
+      <Section className="bg-br-blue relative overflow-hidden">
+        <div className="absolute top-0 right-0 w-full h-full bg-[radial-gradient(circle_at_top_right,rgba(0,151,57,0.1),transparent)] z-0" />
+        <SectionTitle dark>Quem usa, <span className="text-white">recomenda!</span></SectionTitle>
+        <div className="grid md:grid-cols-2 gap-12 items-center relative z-10">
+          <div className="space-y-10">
+            <div className="bg-white p-10 rounded-[2.5rem] shadow-2xl relative border-t-8 border-br-yellow transform -rotate-1">
+              <p className="text-2xl italic mb-8 font-medium text-br-blue">"Simplesmente foda. Antes eu ficava dependendo da minha esposa toda semana, agora faço em 5 minutos enquanto tomo banho. A qualidade é absurda!"</p>
+              <div className="flex items-center gap-5">
+                <div className="w-14 h-14 bg-br-green text-br-yellow rounded-full flex items-center justify-center font-black text-xl shadow-lg shadow-br-green/20">R</div>
                 <div>
-                  <p className="font-bold">Ricardo Santos</p>
-                  <p className="text-sm text-gray-500">Curitiba, PR</p>
+                  <p className="font-black text-xl text-br-blue">Ricardo Santos</p>
+                  <p className="text-sm text-br-green font-bold uppercase tracking-widest">Empresário • São Bernardo, SP</p>
                 </div>
               </div>
             </div>
-            <Button href={ASSETS.LINKS.INSTAGRAM} variant="outline" className="w-full">
-              <Instagram size={20} /> Ver mais no Instagram
+            <Button href={ASSETS.LINKS.INSTAGRAM} variant="outline" className="w-full border-white text-white hover:bg-white hover:text-br-blue">
+              <Instagram size={24} /> Ver comunidade no Instagram
             </Button>
           </div>
-          <div className="rounded-3xl overflow-hidden shadow-2xl border-4 border-white">
+          <div className="rounded-[3rem] overflow-hidden shadow-2xl border-4 border-br-green/30 transform rotate-1">
             <img 
               src={getDriveImageUrl(ASSETS.IMAGES.SOCIAL_PROOF)} 
               alt="Prova social" 
-              className="w-full h-auto"
+              className="w-full h-auto brightness-110"
               referrerPolicy="no-referrer"
             />
           </div>
@@ -489,102 +527,140 @@ export default function App() {
         <SectionTitle>Escolha as suas cores</SectionTitle>
         <VariationCarousel />
       </Section>
-
-      {/* 9. VÍDEOS DE DEMONSTRAÇÃO */}
-      <Section className="bg-[#111] text-white">
-        <SectionTitle>Veja o Duo Head em ação</SectionTitle>
-        <div className="max-w-4xl mx-auto">
+      <Section dark className="bg-black/95">
+        <SectionTitle dark>Veja o <span className="text-br-green">Duo Head</span> em ação</SectionTitle>
+        <div className="max-w-4xl mx-auto flex flex-col items-center">
           <VideoPlayer 
             srcId={ASSETS.VIDEOS.SEC1} 
             title="Demonstração Prática"
+            className="border-8 border-white/5 shadow-2xl"
           />
+          <div className="mt-12 text-center">
+            <p className="text-white/60 text-lg mb-8 font-medium">Assista como é simples e rápido ter o resultado que você sempre quis.</p>
+            <Button href="#precos" variant="yellow">
+              Quero este resultado agora
+            </Button>
+          </div>
         </div>
       </Section>
 
-      {/* 10, 12. OFERTA & ESCASSEZ */}
-      <Section className="bg-[#25D366]/5 relative">
-        <div className="bg-[#111] text-white rounded-[3rem] p-12 md:p-20 text-center relative overflow-hidden shadow-2xl">
-          <div className="absolute top-0 right-0 w-64 h-64 bg-[#25D366]/20 blur-[100px]" />
-          <div className="absolute bottom-0 left-0 w-64 h-64 bg-[#007BFF]/20 blur-[100px]" />
-          
-          <span className="text-[#25D366] font-bold tracking-widest uppercase mb-4 block">Lote de produção limitado</span>
-          <h2 className="text-4xl md:text-7xl font-bold mb-8">Comece a economizar hoje mesmo!</h2>
-          
-          <div className="flex flex-col items-center gap-6 mb-12">
-            <div className="flex items-baseline gap-2">
-              <span className="text-gray-400 text-2xl line-through">R$ 79,90</span>
-            </div>
-            <div className="bg-white/10 px-8 py-4 rounded-2xl flex flex-col items-center">
-              <span className="text-gray-300 font-bold">Por apenas</span>
-              <p className="text-5xl md:text-8xl font-black text-[#25D366]">R$ 34,90</p>
-              <span className="text-gray-400">Preço de lançamento</span>
-            </div>
-          </div>
+      {/* 10. OFERTA & ESCASSEZ */}
+      <Section id="precos" className="bg-br-green/5 relative py-32">
+        <SectionTitle>Escolha o seu <span className="text-br-green">Duo Head</span></SectionTitle>
+        
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 max-w-7xl mx-auto items-stretch">
+          {(Object.values((ASSETS as any).PRODUCTS) as any[]).map((product, i) => (
+            <motion.div
+              key={i}
+              initial={{ opacity: 0, y: 30 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true }}
+              transition={{ delay: i * 0.1 }}
+              className={cn(
+                "relative group flex flex-col bg-white rounded-[2.5rem] p-8 shadow-xl border-2 transition-all duration-300 hover:scale-[1.02]",
+                product.featured ? "border-br-yellow ring-4 ring-br-yellow/10" : "border-gray-50"
+              )}
+            >
+              {product.featured && (
+                <div className="absolute -top-4 left-1/2 -translate-x-1/2 bg-br-yellow text-br-blue font-black px-6 py-2 rounded-full text-xs uppercase tracking-[0.2em] shadow-lg whitespace-nowrap z-10">
+                  Mais Vendido
+                </div>
+              )}
+              
+              <div className="flex-1">
+                <h3 className="text-2xl font-black text-br-blue leading-[1.1] mb-2 uppercase italic">{product.name}</h3>
+                <p className="text-br-blue/60 text-sm mb-8 font-medium leading-tight">{product.description}</p>
+                
+                <div className="mb-8">
+                  <span className="text-gray-400 text-sm font-bold line-through block">De R$ {product.priceOld}</span>
+                  <div className="flex items-baseline gap-1 mt-1">
+                    <span className="text-br-blue font-black text-lg">R$</span>
+                    <span className="text-5xl font-black text-br-green tracking-tighter leading-none">{product.priceNew.split(',')[0]}</span>
+                    <span className="text-2xl font-black text-br-green tracking-tighter">,{product.priceNew.split(',')[1]}</span>
+                  </div>
+                </div>
+              </div>
+              
+              <Button href={product.link} variant={product.featured ? 'yellow' : 'primary'} className="w-full py-5 text-sm">
+                Comprar Agora
+              </Button>
+              
+              <div className="mt-4 flex items-center justify-center gap-2 text-br-blue/40 text-[10px] font-bold uppercase tracking-widest">
+                <ShieldCheck size={14} className="text-br-green" /> Checkout Seguro
+              </div>
+            </motion.div>
+          ))}
+        </div>
 
-          <div className="flex flex-col sm:flex-row gap-4 justify-center">
-            <Button href={ASSETS.LINKS.SHOPEE} className="bg-white text-[#111] hover:bg-gray-100 flex-1 py-6 h-auto">
-              COMPRAR AGORA (SHOPEE)
-            </Button>
-            <Button href={ASSETS.LINKS.WHATSAPP} variant="whatsapp" className="flex-1 py-6 h-auto">
-              COMPRAR VIA WHATSAPP
+        <div className="mt-20 bg-br-blue text-white rounded-[3.5rem] p-12 md:p-24 text-center relative overflow-hidden shadow-[0_40px_80px_rgba(1,33,105,0.4)]">
+          <div className="absolute top-0 right-0 w-[500px] h-[500px] bg-br-green/20 blur-[120px] -translate-y-1/2 translate-x-1/2" />
+          <div className="absolute bottom-0 left-0 w-[500px] h-[500px] bg-br-yellow/10 blur-[120px] translate-y-1/2 -translate-x-1/2" />
+          
+          <span className="text-br-yellow font-black tracking-[0.3em] uppercase mb-6 block text-sm md:text-base animate-pulse relative z-10">Lote especial: Poucas unidades no estoque!</span>
+          <h2 className="text-5xl md:text-8xl font-black mb-10 leading-[0.9] italic uppercase relative z-10">A Revolução <br /><span className="text-br-green">Brasil Edition</span></h2>
+          
+          <div className="flex flex-col sm:flex-row gap-6 justify-center max-w-4xl mx-auto relative z-10">
+            <Button href="#precos" variant="yellow" className="w-full sm:w-auto min-w-[320px] py-7 h-auto text-xl shadow-2xl">
+              ESCOLHER MEU KIT 🇧🇷
             </Button>
           </div>
           
-          <p className="mt-12 text-sm text-gray-500 flex items-center justify-center gap-2">
-            <Clock size={16} /> Restam poucas unidades deste lote. Envio imediato.
+          <p className="mt-12 text-base text-white/40 flex items-center justify-center gap-3 font-bold uppercase tracking-widest relative z-10">
+            <Clock size={20} className="text-br-yellow" /> Envio expresso para todo o Brasil
           </p>
         </div>
       </Section>
 
       {/* 11. ENTREGA & INFOS */}
       <Section className="bg-white border-b border-gray-100">
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-12 text-center">
-          <div className="flex flex-col items-center">
-            <div className="bg-[#F5F5F5] p-6 rounded-full mb-6">
-              <Package size={40} className="text-[#111]" />
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-16 text-center">
+          <div className="flex flex-col items-center group">
+            <div className="bg-br-green/10 p-8 rounded-[2rem] mb-8 group-hover:bg-br-green group-hover:text-br-yellow transition-all duration-300">
+              <Package size={48} strokeWidth={2.5} className="text-br-green group-hover:text-br-yellow" />
             </div>
-            <h3 className="text-2xl font-bold mb-2">Envio Rápido</h3>
-            <p className="text-gray-600">Produto a pronta entrega para todo o Brasil.</p>
+            <h3 className="text-3xl font-black mb-3 italic uppercase text-br-blue">Envio Ninja</h3>
+            <p className="text-br-blue/50 font-medium text-lg">Postagem em até 24h. <br />Receba rápido em qualquer lugar.</p>
           </div>
-          <div className="flex flex-col items-center">
-            <div className="bg-[#25D366]/10 p-6 rounded-full mb-6">
-              <MapPin size={40} className="text-[#25D366]" />
+          <div className="flex flex-col items-center group">
+            <div className="bg-br-yellow/20 p-8 rounded-[2rem] mb-8 group-hover:bg-br-yellow group-hover:text-br-blue transition-all duration-300">
+              <MapPin size={48} strokeWidth={2.5} className="text-br-blue" />
             </div>
-            <h3 className="text-2xl font-bold mb-2">Retirada em Mãos</h3>
-            <p className="text-gray-600">Disponível em locais selecionados. Consulte via WhatsApp.</p>
+            <h3 className="text-3xl font-black mb-3 italic uppercase text-br-blue">Retirada VIP</h3>
+            <p className="text-br-blue/50 font-medium text-lg">Mora no ABC Paulista? <br />Retire em mãos e economize o frete.</p>
           </div>
-          <div className="flex flex-col items-center">
-            <div className="bg-[#007BFF]/10 p-6 rounded-full mb-6">
-              <ShieldCheck size={40} className="text-[#007BFF]" />
+          <div className="flex flex-col items-center group">
+            <div className="bg-br-blue/10 p-8 rounded-[2rem] mb-8 group-hover:bg-br-blue group-hover:text-white transition-all duration-300">
+              <ShieldCheck size={48} strokeWidth={2.5} className="text-br-blue group-hover:text-white" />
             </div>
-            <h3 className="text-2xl font-bold mb-2">Garantia Duo Head</h3>
-            <p className="text-gray-600">Qualidade garantida com suporte pós-venda.</p>
+            <h3 className="text-3xl font-black mb-3 italic uppercase text-br-blue">Garantia Real</h3>
+            <p className="text-br-blue/50 font-medium text-lg">Qualidade atestada. <br />Sua satisfação ou seu dinheiro de volta.</p>
           </div>
         </div>
       </Section>
-
       {/* Footer */}
-      <footer className="py-12 px-6 bg-[#F5F5F5] text-center text-gray-500 border-t border-gray-200 pb-32">
-        <div className="flex items-center justify-center gap-2 mb-6">
-          <div className="w-8 h-8 bg-black rounded-lg flex items-center justify-center">
-            <span className="text-white font-black text-sm">D</span>
+      <footer className="py-20 px-6 bg-br-blue text-white text-center pb-32">
+        <div className="flex flex-col items-center justify-center gap-4 mb-10">
+          <div className="w-16 h-16 bg-br-green rounded-2xl flex items-center justify-center shadow-lg shadow-br-green/20 md:rotate-3">
+            <span className="text-br-yellow font-black text-3xl">D</span>
           </div>
-          <span className="font-black text-xl tracking-tighter text-[#111]">DUO HEAD</span>
+          <div className="flex flex-col items-center">
+            <span className="font-black text-3xl tracking-tighter text-br-green">DUO HEAD</span>
+            <span className="text-xs font-bold tracking-[0.3em] text-white/50 uppercase">Brasil Edition • 2026</span>
+          </div>
         </div>
-        <p className="mb-4">© 2026 Duo Head Brasil - Todos os direitos reservados.</p>
-        <div className="flex justify-center gap-6">
-          <a href={ASSETS.LINKS.INSTAGRAM} className="hover:text-[#111] transition-colors"><Instagram /></a>
-          <a href={ASSETS.LINKS.WHATSAPP} className="hover:text-[#25D366] transition-colors"><MessageCircle /></a>
+        <div className="max-w-2xl mx-auto text-white/40 mb-10 text-sm">
+          <p>© 2026 Duo Head Brasil. Todos os direitos reservados. Design e Inovação 100% Brasileira. <br />Enviamos para todo o território nacional com carinho e rapidez.</p>
+        </div>
+        <div className="flex justify-center gap-8">
+          <a href={ASSETS.LINKS.INSTAGRAM} target="_blank" rel="noopener noreferrer" className="p-3 bg-white/5 rounded-full hover:bg-white/10 text-white transition-all hover:scale-110"><Instagram /></a>
+          <a href={ASSETS.LINKS.WHATSAPP} target="_blank" rel="noopener noreferrer" className="p-3 bg-white/5 rounded-full hover:bg-green-500/20 text-white hover:text-[#25D366] transition-all hover:scale-110"><MessageCircle /></a>
         </div>
       </footer>
 
       {/* 13. STICKY MOBILE CTA */}
       <div className="fixed bottom-6 left-6 right-6 md:hidden z-50 flex gap-2">
-        <Button href={ASSETS.LINKS.SHOPEE} className="flex-1 shadow-2xl py-5 text-base rounded-2xl">
-          Comprar
-        </Button>
-        <Button href={ASSETS.LINKS.WHATSAPP} variant="whatsapp" className="flex-1 shadow-2xl py-5 text-base rounded-2xl">
-          WhatsApp
+        <Button href="#precos" variant="yellow" className="w-full shadow-2xl py-5 text-sm rounded-2xl">
+          ESCOLHER MEU KIT 🇧🇷
         </Button>
       </div>
 
@@ -593,7 +669,7 @@ export default function App() {
 }
 
 // Missing component for delivery section
-const MapPin = ({ size, className }: { size: number, className: string }) => (
+const MapPin = ({ size, className, strokeWidth = 2.5 }: { size: number, className: string, strokeWidth?: number }) => (
   <svg 
     xmlns="http://www.w3.org/2000/svg" 
     width={size} 
@@ -601,7 +677,7 @@ const MapPin = ({ size, className }: { size: number, className: string }) => (
     viewBox="0 0 24 24" 
     fill="none" 
     stroke="currentColor" 
-    strokeWidth="2" 
+    strokeWidth={strokeWidth} 
     strokeLinecap="round" 
     strokeLinejoin="round" 
     className={className}
