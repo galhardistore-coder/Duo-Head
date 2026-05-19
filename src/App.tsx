@@ -232,8 +232,24 @@ const Button = ({
   const Content = () => <>{children}</>;
 
   if (href) {
+    const isAnchor = href.startsWith('#');
     return (
-      <a href={href} target="_blank" rel="noopener noreferrer" className={cn(baseStyles, variants[variant], className)}>
+      <a 
+        href={href} 
+        target={isAnchor ? undefined : "_blank"} 
+        rel={isAnchor ? undefined : "noopener noreferrer"} 
+        className={cn(baseStyles, variants[variant], className)}
+        onClick={(e) => {
+          if (isAnchor) {
+            e.preventDefault();
+            const element = document.querySelector(href);
+            if (element) {
+              element.scrollIntoView({ behavior: 'smooth' });
+            }
+          }
+          onClick?.();
+        }}
+      >
         <Content />
       </a>
     );
