@@ -45,9 +45,9 @@ export const ASSETS = {
     ],
   },
   LINKS: {
-    INSTAGRAM: 'https://www.instagram.com/jefferson_alencar_da_silva',
+    INSTAGRAM: 'https://www.instagram.com/duohead_/',
     SHOPEE: 'https://shopee.com.br', // Placeholder, the user didn't provide the exact link but asked for Shopee route
-    WHATSAPP: 'https://wa.me/5500000000000', // Placeholder
+    WHATSAPP: 'https://wa.me/5511995250701',
   },
   PRODUCTS: {
     SUPPORT_ONLY_MACH3: {
