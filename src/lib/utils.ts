@@ -55,29 +55,29 @@ export const ASSETS = {
       description: "Apenas o suporte para quem já possui a lâmina Mach3.",
       priceOld: "64,90",
       priceNew: "45,43",
-      link: "https://buy.stripe.com/placeholder1"
+      link: "https://buy.stripe.com/14AcN6ac05ca9FtfoI8k800"
     },
     SUPPORT_ONLY_FUSION5: {
       name: "Suporte Fusion5 (Sem lâmina)",
       description: "Apenas o suporte para quem já possui a lâmina Fusion5.",
       priceOld: "64,90",
       priceNew: "45,43",
-      link: "https://buy.stripe.com/placeholder2"
+      link: "https://buy.stripe.com/7sY4gAac0342g3R90k8k801"
     },
     SUPPORT_WITH_FUSION5: {
       name: "Kit Suporte + Lâmina Fusion5",
       description: "Suporte premium + Refil de lâmina Fusion5 incluso.",
-      priceOld: "99,90",
-      priceNew: "69,93",
-      link: "https://buy.stripe.com/placeholder3",
+      priceOld: "114,90",
+      priceNew: "80,43",
+      link: "https://buy.stripe.com/eVqbJ2fwkeMKaJx7Wg8k803",
       featured: true
     },
     SUPPORT_WITH_MACH3: {
       name: "Kit Suporte + Lâmina Mach3",
       description: "Suporte premium + Refil de lâmina Mach3 incluso.",
-      priceOld: "114,90",
-      priceNew: "80,43",
-      link: "https://buy.stripe.com/placeholder4",
+      priceOld: "99,90",
+      priceNew: "69,93",
+      link: "https://buy.stripe.com/4gM7sMbg4dIG18XekE8k802",
       featured: true
     }
   }

@@ -26,6 +26,82 @@ import { cn, ASSETS, getDriveImageUrl, getDriveViewerUrl } from './lib/utils';
 
 // --- Components ---
 
+const CouponPopup = () => {
+  const [isVisible, setIsVisible] = useState(false);
+  const [copied, setCopied] = useState(false);
+  const couponCode = "OFER30OFF";
+
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      setIsVisible(true);
+    }, 1500); // Show after 1.5s
+    return () => clearTimeout(timer);
+  }, []);
+
+  const copyToClipboard = () => {
+    navigator.clipboard.writeText(couponCode);
+    setCopied(true);
+    setTimeout(() => setCopied(false), 2000);
+  };
+
+  if (!isVisible) return null;
+
+  return (
+    <div className="fixed inset-0 z-[100] flex items-center justify-center p-6 bg-br-blue/40 backdrop-blur-md">
+      <motion.div 
+        initial={{ scale: 0.8, opacity: 0, y: 20 }}
+        animate={{ scale: 1, opacity: 1, y: 0 }}
+        className="relative w-full max-w-md bg-white rounded-[3rem] overflow-hidden shadow-[0_40px_100px_rgba(0,0,0,0.3)] border-4 border-br-yellow"
+      >
+        <button 
+          onClick={() => setIsVisible(false)}
+          className="absolute top-6 right-6 p-2 bg-gray-100 rounded-full hover:bg-gray-200 transition-colors text-br-blue z-10"
+        >
+          <X size={20} />
+        </button>
+
+        <div className="bg-br-green p-10 text-center relative overflow-hidden">
+          <div className="absolute top-0 right-0 w-32 h-32 bg-br-yellow opacity-20 blur-2xl rounded-full -translate-y-1/2 translate-x-1/2" />
+          <div className="absolute bottom-0 left-0 w-32 h-32 bg-br-blue opacity-10 blur-2xl rounded-full translate-y-1/2 -translate-x-1/2" />
+          
+          <span className="inline-block bg-br-yellow text-br-blue px-4 py-1 rounded-full text-xs font-black uppercase tracking-widest mb-4">Presente Exclusivo 🇧🇷</span>
+          <h2 className="text-4xl font-black text-white leading-none uppercase italic tracking-tighter">GANHE 30% <br /><span className="text-br-yellow">DE DESCONTO</span></h2>
+        </div>
+
+        <div className="p-10 text-center">
+          <p className="text-br-blue/60 font-medium mb-8">Use o cupom abaixo no checkout e garanta o seu Duo Head pelo menor preço do ano!</p>
+          
+          <div className="relative group">
+            <div className="absolute -inset-1 bg-gradient-to-r from-br-green via-br-yellow to-br-blue rounded-2xl blur opacity-25 group-hover:opacity-50 transition duration-1000 group-hover:duration-200"></div>
+            <div className="relative flex items-center justify-between gap-2 p-2 bg-gray-50 border-2 border-dashed border-br-green/30 rounded-2xl">
+              <span className="flex-1 font-mono text-2xl font-black text-br-blue tracking-wider pl-4">
+                {couponCode}
+              </span>
+              <button 
+                onClick={copyToClipboard}
+                className={cn(
+                  "px-6 py-3 rounded-xl font-black text-xs uppercase tracking-widest transition-all flex items-center gap-2",
+                  copied ? "bg-br-green text-white" : "bg-br-yellow text-br-blue hover:bg-[#ebcd00]"
+                )}
+              >
+                {copied ? <CheckCircle2 size={16} /> : <div className="w-4 h-4 bg-br-blue/10 rounded-sm" />}
+                {copied ? "COPIADO!" : "COPIAR"}
+              </button>
+            </div>
+          </div>
+
+          <button 
+            onClick={() => setIsVisible(false)}
+            className="mt-8 text-br-blue/40 hover:text-br-blue text-xs font-black uppercase tracking-[0.2em] transition-colors"
+          >
+            Continuar para o site
+          </button>
+        </div>
+      </motion.div>
+    </div>
+  );
+};
+
 const VideoPlayer = ({ srcId, title, className }: { srcId: string; title: string, className?: string }) => {
   const [isVisible, setIsVisible] = React.useState(false);
   const containerRef = React.useRef<HTMLDivElement>(null);
@@ -294,6 +370,7 @@ export default function App() {
   return (
     <div className="min-h-screen bg-[#FDFCF0] text-br-blue font-sans overflow-x-hidden">
       
+      <CouponPopup />
       <CountdownTimer />
       
       {/* Header / Nav */}
