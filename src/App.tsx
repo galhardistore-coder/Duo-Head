@@ -60,16 +60,16 @@ const CouponPopup = () => {
           <X size={20} />
         </button>
 
-        <div className="bg-br-green p-10 text-center relative overflow-hidden">
+        <div className="bg-br-green p-6 md:p-10 text-center relative overflow-hidden">
           <div className="absolute top-0 right-0 w-32 h-32 bg-br-yellow opacity-20 blur-2xl rounded-full -translate-y-1/2 translate-x-1/2" />
           <div className="absolute bottom-0 left-0 w-32 h-32 bg-br-blue opacity-10 blur-2xl rounded-full translate-y-1/2 -translate-x-1/2" />
           
-          <span className="inline-block bg-br-yellow text-br-blue px-4 py-1 rounded-full text-xs font-black uppercase tracking-widest mb-4">Presente Exclusivo 🇧🇷</span>
-          <h2 className="text-4xl font-black text-white leading-none uppercase italic tracking-tighter">GANHE 30% <br /><span className="text-br-yellow">DE DESCONTO</span></h2>
+          <span className="inline-block bg-br-yellow text-br-blue px-4 py-1 rounded-full text-[10px] font-black uppercase tracking-widest mb-4">Presente Exclusivo 🇧🇷</span>
+          <h2 className="text-3xl md:text-4xl font-black text-white leading-none uppercase italic tracking-tighter">GANHE 30% <br /><span className="text-br-yellow">DE DESCONTO</span></h2>
         </div>
 
-        <div className="p-10 text-center">
-          <p className="text-br-blue/60 font-medium mb-8">Use o cupom abaixo no checkout e garanta o seu Duo Head pelo menor preço do ano!</p>
+        <div className="p-6 md:p-10 text-center">
+          <p className="text-br-blue/60 font-medium mb-8 text-sm md:text-base">Use o cupom abaixo no checkout e garanta o seu Duo Head pelo menor preço do ano!</p>
           
           <div className="relative group">
             <div className="absolute -inset-1 bg-gradient-to-r from-br-green via-br-yellow to-br-blue rounded-2xl blur opacity-25 group-hover:opacity-50 transition duration-1000 group-hover:duration-200"></div>
@@ -171,15 +171,15 @@ const CountdownTimer = () => {
   };
 
   return (
-    <div className="fixed top-0 left-0 right-0 z-[60] bg-br-green py-2 px-4 border-b border-br-yellow/30 flex items-center justify-center gap-3 shadow-xl">
-      <div className="flex items-center gap-2">
-        <Clock size={16} className="text-br-yellow animate-pulse" />
-        <p className="text-white text-[10px] md:text-sm font-bold uppercase tracking-widest">
+    <div className="fixed top-0 left-0 right-0 z-[60] bg-br-green h-12 px-4 border-b border-br-yellow/30 flex items-center justify-center gap-2 md:gap-3 shadow-xl">
+      <div className="flex items-center gap-1.5 md:gap-2">
+        <Clock size={14} className="text-br-yellow animate-pulse md:w-4 md:h-4" />
+        <p className="text-white text-[9px] md:text-sm font-bold uppercase tracking-[0.1em] md:tracking-widest whitespace-nowrap">
           Oferta de Lançamento termina em:
         </p>
       </div>
       <div className={cn(
-        "text-xl md:text-2xl font-mono font-black tabular-nums min-w-[70px] text-center",
+        "text-lg md:text-2xl font-mono font-black tabular-nums min-w-[60px] md:min-w-[70px] text-center",
         timeLeft < 60 ? "text-red-400 animate-pulse" : "text-br-yellow"
       )}>
         {formatTime(timeLeft)}
@@ -189,6 +189,7 @@ const CountdownTimer = () => {
 };
 
 const VariationCarousel = () => {
+  const [selectedIndex, setSelectedIndex] = useState(0);
   const [emblaRef, emblaApi] = useEmblaCarousel({ 
     loop: true,
     align: 'start',
@@ -198,6 +199,18 @@ const VariationCarousel = () => {
       '(min-width: 1024px)': { slidesToScroll: 3 }
     }
   });
+
+  const onSelect = React.useCallback(() => {
+    if (!emblaApi) return;
+    setSelectedIndex(emblaApi.selectedScrollSnap());
+  }, [emblaApi]);
+
+  useEffect(() => {
+    if (!emblaApi) return;
+    onSelect();
+    emblaApi.on('select', onSelect);
+    emblaApi.on('reInit', onSelect);
+  }, [emblaApi, onSelect]);
 
   const scrollPrev = React.useCallback(() => emblaApi && emblaApi.scrollPrev(), [emblaApi]);
   const scrollNext = React.useCallback(() => emblaApi && emblaApi.scrollNext(), [emblaApi]);
@@ -225,6 +238,7 @@ const VariationCarousel = () => {
                       alt={variant.name} 
                       className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110"
                       referrerPolicy="no-referrer"
+                      loading="lazy"
                     />
                     {isBrasil ? (
                       <div className="absolute top-4 left-4 bg-br-yellow text-br-blue px-4 py-2 rounded-full text-xs font-black shadow-lg flex items-center gap-1">
@@ -238,7 +252,7 @@ const VariationCarousel = () => {
                   </div>
                   <div className="p-8 text-center bg-white">
                     <p className={cn(
-                      "font-black text-2xl uppercase tracking-tighter",
+                      "font-black text-2xl uppercase tracking-tighter text-br-blue",
                       isBrasil ? "text-br-green" : "text-[#111]"
                     )}>{variant.name}</p>
                     <p className="text-sm text-gray-500 mt-2 font-medium">
@@ -246,9 +260,9 @@ const VariationCarousel = () => {
                     </p>
                     {isBrasil && (
                       <div className="mt-4 flex justify-center gap-1">
-                        <div className="w-8 h-2 rounded-full bg-br-green" />
-                        <div className="w-8 h-2 rounded-full bg-br-yellow" />
-                        <div className="w-8 h-2 rounded-full bg-br-blue" />
+                        <div className="w-8 h-1.5 rounded-full bg-br-green" />
+                        <div className="w-8 h-1.5 rounded-full bg-br-yellow" />
+                        <div className="w-8 h-1.5 rounded-full bg-br-blue" />
                       </div>
                     )}
                   </div>
@@ -262,21 +276,27 @@ const VariationCarousel = () => {
       {/* Navigation Buttons */}
       <button 
         onClick={scrollPrev}
-        className="absolute left-0 top-1/2 -translate-y-1/2 -translate-x-1/2 bg-white p-3 rounded-full shadow-xl z-10 hidden md:block hover:bg-gray-50 transition-colors border border-gray-100"
+        className="absolute left-0 top-1/2 -translate-y-1/2 -translate-x-1/2 bg-white p-3 rounded-full shadow-xl z-20 hidden md:block hover:bg-gray-50 transition-colors border border-gray-100"
       >
         <ChevronRight className="rotate-180" size={24} />
       </button>
       <button 
         onClick={scrollNext}
-        className="absolute right-0 top-1/2 -translate-y-1/2 translate-x-1/2 bg-white p-3 rounded-full shadow-xl z-10 hidden md:block hover:bg-gray-50 transition-colors border border-gray-100"
+        className="absolute right-0 top-1/2 -translate-y-1/2 translate-x-1/2 bg-white p-3 rounded-full shadow-xl z-20 hidden md:block hover:bg-gray-50 transition-colors border border-gray-100"
       >
         <ChevronRight size={24} />
       </button>
 
       {/* Progress Dots / Visual Indicator */}
-      <div className="flex justify-center gap-2 mt-8 md:hidden">
+      <div className="flex justify-center gap-2 mt-2 md:hidden">
         {ASSETS.IMAGES.VARIATIONS.map((_, i) => (
-          <div key={i} className="w-2 h-2 rounded-full bg-gray-300" />
+          <div 
+            key={i} 
+            className={cn(
+              "h-1.5 rounded-full transition-all duration-300",
+              i === selectedIndex ? "w-8 bg-br-green" : "w-2 bg-gray-300"
+            )} 
+          />
         ))}
       </div>
     </div>
@@ -339,7 +359,7 @@ const Button = ({
 };
 
 const Section = ({ children, className, id, dark = false }: { children: React.ReactNode; className?: string; id?: string; dark?: boolean }) => (
-  <section id={id} className={cn("py-24 px-6", dark ? "bg-br-blue text-white" : "bg-transparent", className)}>
+  <section id={id} className={cn("py-16 md:py-24 px-6", dark ? "bg-br-blue text-white" : "bg-transparent", className)}>
     <div className="max-w-6xl mx-auto">
       {children}
     </div>
@@ -348,7 +368,7 @@ const Section = ({ children, className, id, dark = false }: { children: React.Re
 
 const SectionTitle = ({ children, centered = true, dark = false }: { children: React.ReactNode; centered?: boolean; dark?: boolean }) => (
   <h2 className={cn(
-    "text-4xl md:text-6xl font-black mb-16 tracking-tighter uppercase italic leading-[1]", 
+    "text-3xl md:text-6xl font-black mb-12 md:mb-16 tracking-tighter uppercase italic leading-[1]", 
     centered && "text-center",
     dark ? "text-br-yellow" : "text-br-blue"
   )}>
@@ -409,17 +429,17 @@ export default function App() {
             <span className="inline-flex items-center gap-2 bg-br-green text-br-yellow text-xs font-black px-4 py-2 rounded-full mb-8 tracking-[0.2em] uppercase shadow-lg shadow-br-green/20">
               <span className="text-base">🇧🇷</span> Orgulho Nacional
             </span>
-            <h1 className="text-5xl md:text-8xl font-black mb-8 leading-[0.95] tracking-tighter uppercase italic">
+            <h1 className="text-4xl md:text-8xl font-black mb-6 md:mb-8 leading-[0.95] tracking-tighter uppercase italic">
               O Suporte <br />
               <span className="text-br-green">Mais Vendido</span> <br />
               <span className="text-br-yellow bg-br-blue px-4 inline-block mt-2">Do Brasil</span>
             </h1>
-            <p className="text-xl md:text-2xl text-br-blue/70 mb-12 max-w-2xl mx-auto font-medium">
+            <p className="text-lg md:text-2xl text-br-blue/70 mb-10 md:mb-12 max-w-2xl mx-auto font-medium">
               Autonomia total para raspar a cabeça com perfeição. O <span className="font-bold text-br-green decoration-br-yellow decoration-2 underline-offset-4 underline">Duo Head</span> é a inovação que o brasileiro precisava.
             </p>
             
-            <div className="flex flex-col sm:flex-row gap-5 mb-20 justify-center">
-              <Button href="#precos" variant="yellow" className="w-full sm:w-auto min-w-[320px]">
+            <div className="flex flex-col sm:flex-row gap-4 md:gap-5 mb-16 md:mb-20 justify-center">
+              <Button href="#precos" variant="yellow" className="w-full sm:w-auto min-w-0 sm:min-w-[320px]">
                 <ShoppingBag size={22} strokeWidth={3} /> Aproveitar Oferta
               </Button>
             </div>
@@ -531,13 +551,13 @@ export default function App() {
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true }}
               transition={{ delay: i * 0.1 }}
-              className="bg-white p-10 rounded-[2.5rem] shadow-xl shadow-br-green/5 hover:shadow-br-green/10 transition-all border border-br-green/5 group"
+              className="bg-white p-6 md:p-10 rounded-[2rem] md:rounded-[2.5rem] shadow-xl shadow-br-green/5 hover:shadow-br-green/10 transition-all border border-br-green/5 group"
             >
-              <div className="text-br-green mb-8 inline-block p-5 bg-br-green/10 rounded-[1.5rem] group-hover:scale-110 transition-transform">
+              <div className="text-br-green mb-6 md:mb-8 inline-block p-4 md:p-5 bg-br-green/10 rounded-[1.2rem] md:rounded-[1.5rem] group-hover:scale-110 transition-transform">
                 {benefit.icon}
               </div>
-              <h3 className="text-2xl font-black mb-4 uppercase italic tracking-tight text-br-blue">{benefit.title}</h3>
-              <p className="text-br-blue/60 text-lg leading-relaxed font-medium">{benefit.desc}</p>
+              <h3 className="text-xl md:text-2xl font-black mb-3 md:mb-4 uppercase italic tracking-tight text-br-blue">{benefit.title}</h3>
+              <p className="text-br-blue/60 text-base md:text-lg leading-relaxed font-medium">{benefit.desc}</p>
             </motion.div>
           ))}
         </div>
@@ -641,7 +661,7 @@ export default function App() {
       <Section id="precos" className="bg-br-green/5 relative py-32">
         <SectionTitle>Escolha o seu <span className="text-br-green">Duo Head</span></SectionTitle>
         
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 max-w-7xl mx-auto items-stretch">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 md:gap-6 max-w-7xl mx-auto items-stretch">
           {(Object.values((ASSETS as any).PRODUCTS) as any[]).map((product, i) => (
             <motion.div
               key={i}
@@ -650,7 +670,7 @@ export default function App() {
               viewport={{ once: true }}
               transition={{ delay: i * 0.1 }}
               className={cn(
-                "relative group flex flex-col bg-white rounded-[2.5rem] p-8 shadow-xl border-2 transition-all duration-300 hover:scale-[1.02]",
+                "relative group flex flex-col bg-white rounded-[2rem] md:rounded-[2.5rem] p-6 md:p-8 shadow-xl border-2 transition-all duration-300 hover:scale-[1.02]",
                 product.featured ? "border-br-yellow ring-4 ring-br-yellow/10" : "border-gray-50"
               )}
             >
@@ -685,21 +705,21 @@ export default function App() {
           ))}
         </div>
 
-        <div className="mt-20 bg-br-blue text-white rounded-[3.5rem] p-12 md:p-24 text-center relative overflow-hidden shadow-[0_40px_80px_rgba(1,33,105,0.4)]">
+        <div className="mt-16 md:mt-20 bg-br-blue text-white rounded-[2.5rem] md:rounded-[3.5rem] p-8 md:p-24 text-center relative overflow-hidden shadow-[0_40px_80px_rgba(1,33,105,0.4)]">
           <div className="absolute top-0 right-0 w-[500px] h-[500px] bg-br-green/20 blur-[120px] -translate-y-1/2 translate-x-1/2" />
           <div className="absolute bottom-0 left-0 w-[500px] h-[500px] bg-br-yellow/10 blur-[120px] translate-y-1/2 -translate-x-1/2" />
           
-          <span className="text-br-yellow font-black tracking-[0.3em] uppercase mb-6 block text-sm md:text-base animate-pulse relative z-10">Lote especial: Poucas unidades no estoque!</span>
-          <h2 className="text-5xl md:text-8xl font-black mb-10 leading-[0.9] italic uppercase relative z-10">A Revolução <br /><span className="text-br-green">Brasil Edition</span></h2>
+          <span className="text-br-yellow font-black tracking-[0.2em] md:tracking-[0.3em] uppercase mb-6 block text-[10px] md:text-base animate-pulse relative z-10">Lote especial: Poucas unidades no estoque!</span>
+          <h2 className="text-4xl md:text-8xl font-black mb-8 md:mb-10 leading-[0.9] italic uppercase relative z-10">A Revolução <br /><span className="text-br-green">Brasil Edition</span></h2>
           
-          <div className="flex flex-col sm:flex-row gap-6 justify-center max-w-4xl mx-auto relative z-10">
-            <Button href="#precos" variant="yellow" className="w-full sm:w-auto min-w-[320px] py-7 h-auto text-xl shadow-2xl">
+          <div className="flex flex-col sm:flex-row gap-4 md:gap-6 justify-center max-w-4xl mx-auto relative z-10">
+            <Button href="#precos" variant="yellow" className="w-full sm:w-auto min-w-0 sm:min-w-[320px] py-6 md:py-7 h-auto text-lg md:text-xl shadow-2xl">
               ESCOLHER MEU KIT 🇧🇷
             </Button>
           </div>
           
-          <p className="mt-12 text-base text-white/40 flex items-center justify-center gap-3 font-bold uppercase tracking-widest relative z-10">
-            <Clock size={20} className="text-br-yellow" /> Envio expresso para todo o Brasil
+          <p className="mt-8 md:mt-12 text-xs md:text-base text-white/40 flex items-center justify-center gap-3 font-bold uppercase tracking-widest relative z-10">
+            <Clock size={16} className="text-br-yellow md:w-5 md:h-5" /> Envio expresso para todo o Brasil
           </p>
         </div>
       </Section>
@@ -752,8 +772,11 @@ export default function App() {
 
       {/* 13. STICKY MOBILE CTA */}
       <div className="fixed bottom-6 left-6 right-6 md:hidden z-50 flex gap-2">
-        <Button href="#precos" variant="yellow" className="w-full shadow-2xl py-5 text-sm rounded-2xl">
-          ESCOLHER MEU KIT 🇧🇷
+        <Button href={ASSETS.LINKS.WHATSAPP} variant="whatsapp" className="w-16 h-16 p-0 rounded-2xl flex-shrink-0 flex items-center justify-center shadow-2xl">
+          <MessageCircle size={32} strokeWidth={2.5} />
+        </Button>
+        <Button href="#precos" variant="yellow" className="flex-1 shadow-2xl py-5 text-xs rounded-2xl leading-tight">
+          ESCOLHER MEU KIT <br /><span className="text-[10px] opacity-80">PROMOÇÃO BRASIL</span>
         </Button>
       </div>
 
