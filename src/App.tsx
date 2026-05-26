@@ -63,13 +63,33 @@ const CouponPopup = () => {
     return () => clearTimeout(timer);
   }, []);
 
-  // Safeguard watchdog: if overlay is active but modal element didn't load in DOM after 1 second, remove overlay instantly
+  // Safeguard watchdog: if overlay is active but modal element didn't load or remains invisible in DOM after 1 second, remove overlay instantly
   useEffect(() => {
     if (isVisible) {
       const watchdog = setTimeout(() => {
-        if (!modalRef.current) {
-          console.warn("CouponPopup safe container not detected in DOM after 1s. Forcing dismissal to avoid lockup.");
+        const modalElement = modalRef.current;
+        if (!modalElement) {
+          console.warn("CouponPopup safe container not detected in DOM after 1s. Forcing dismissal to avoid iframe lockup.");
           setIsVisible(false);
+          return;
+        }
+
+        // Deep visibility inspection to ensure Framer Motion or style glitches haven't trapped the modal in invisible state
+        if (typeof window !== 'undefined') {
+          try {
+            const style = window.getComputedStyle(modalElement);
+            if (
+              style.opacity === '0' || 
+              style.visibility === 'hidden' || 
+              style.display === 'none' ||
+              modalElement.offsetHeight === 0
+            ) {
+              console.warn("CouponPopup modal is present but computed style indicates it is completely invisible or layout is 0px. Dismissing to release overlay.");
+              setIsVisible(false);
+            }
+          } catch (e) {
+            // Safe fallback if computed style fails
+          }
         }
       }, 1000);
       return () => clearTimeout(watchdog);
@@ -101,73 +121,86 @@ const CouponPopup = () => {
 
   if (!isVisible) return null;
 
+  // Render the central popup inside the iframe viewport using position: fixed with absolute centering.
+  // In iframe mode, we omit framer-motion and backdrop-blur to avoid any rendering bugs or browser sandbox blockages.
+  const modalInnerContent = (
+    <>
+      <button 
+        onClick={() => setIsVisible(false)}
+        className="absolute top-4 right-4 md:top-6 md:right-6 p-2 bg-gray-100 rounded-full hover:bg-gray-200 transition-colors text-br-blue z-[202]"
+        aria-label="Close coupon portal"
+      >
+        <X size={20} />
+      </button>
+
+      <div className="bg-br-green p-6 md:p-10 text-center relative overflow-hidden select-none">
+        <div className="absolute top-0 right-0 w-32 h-32 bg-br-yellow opacity-20 blur-2xl rounded-full -translate-y-1/2 translate-x-1/2" />
+        <div className="absolute bottom-0 left-0 w-32 h-32 bg-br-blue opacity-10 blur-2xl rounded-full translate-y-1/2 -translate-x-1/2" />
+        
+        <span className="inline-block bg-br-yellow text-br-blue px-4 py-1 rounded-full text-[10px] font-black uppercase tracking-widest mb-4">{siteConfig.coupon.badge}</span>
+        <h2 className="text-2xl md:text-4xl font-black text-white leading-none uppercase italic tracking-tighter">{siteConfig.coupon.title} <br /><span className="text-br-yellow">{siteConfig.coupon.titleYellow}</span></h2>
+      </div>
+
+      <div className="p-6 md:p-10 text-center">
+        <p className="text-br-blue/60 font-medium mb-8 text-sm md:text-base">{siteConfig.coupon.description}</p>
+        
+        <div className="relative group">
+          <div className="absolute -inset-1 bg-gradient-to-r from-br-green via-br-yellow to-br-blue rounded-2xl blur opacity-25 group-hover:opacity-50 transition duration-1000 group-hover:duration-200"></div>
+          <div className="relative flex items-center justify-between gap-2 p-2 bg-gray-50 border-2 border-dashed border-br-green/30 rounded-2xl">
+            <span className="flex-1 font-mono text-xl md:text-2xl font-black text-br-blue tracking-wider pl-4">
+              {couponCode}
+            </span>
+            <button 
+              onClick={copyToClipboard}
+              className={cn(
+                "px-4 py-2.5 md:px-6 md:py-3 rounded-xl font-black text-[10px] md:text-xs uppercase tracking-widest transition-all flex items-center gap-2",
+                copied ? "bg-br-green text-white" : "bg-br-yellow text-br-blue hover:bg-[#ebcd00]"
+              )}
+            >
+              {copied ? <CheckCircle2 size={16} /> : <div className="w-4 h-4 bg-br-blue/10 rounded-sm" />}
+              {copied ? siteConfig.coupon.copiedText : siteConfig.coupon.ctaText}
+            </button>
+          </div>
+        </div>
+
+        <button 
+          onClick={() => setIsVisible(false)}
+          className="mt-8 text-br-blue/40 hover:text-br-blue text-xs font-black uppercase tracking-[0.2em] transition-colors"
+        >
+          {siteConfig.coupon.cancelText}
+        </button>
+      </div>
+    </>
+  );
+
   return (
     <div 
       onClick={handleOverlayClick}
       className={cn(
-        "z-[100] p-6 transition-all duration-300 pointer-events-auto",
-        // Position layout adjustments for iframes (avoiding dead zone in large auto-height iframes)
-        inIframe 
-          ? "absolute inset-x-0 top-0 h-screen min-h-[700px] flex justify-center items-start pt-24" 
-          : "fixed inset-0 flex items-center justify-center",
-        // Avoid heavy backdrop blurs on iframe containers as it freezes/creates rendering issues in WordPress/Elementor
-        inIframe ? "bg-black/75" : "bg-br-blue/40 backdrop-blur-md"
+        "fixed inset-0 z-[200] flex items-center justify-center p-6 overflow-y-auto pointer-events-auto",
+        inIframe ? "bg-black/80" : "bg-br-blue/40 backdrop-blur-md"
       )}
     >
-      <motion.div 
-        ref={modalRef}
-        initial={{ scale: 0.85, opacity: 0, y: inIframe ? -30 : 20 }}
-        animate={{ scale: 1, opacity: 1, y: 0 }}
-        transition={{ type: "spring", damping: 25, stiffness: 200 }}
-        className="relative w-full max-w-md bg-white rounded-[2.5rem] md:rounded-[3rem] overflow-hidden shadow-[0_45px_110px_rgba(0,0,0,0.35)] border-4 border-br-yellow"
-        onClick={(e) => e.stopPropagation()} // Prevent closing when clicking inside the card
-      >
-        <button 
-          onClick={() => setIsVisible(false)}
-          className="absolute top-4 right-4 md:top-6 md:right-6 p-2 bg-gray-100 rounded-full hover:bg-gray-200 transition-colors text-br-blue z-20"
-          aria-label="CleanClose"
+      {inIframe ? (
+        <div 
+          ref={modalRef}
+          className="relative w-full max-w-md bg-white rounded-[2.5rem] md:rounded-[3rem] overflow-hidden shadow-[0_45px_110px_rgba(0,0,0,0.35)] border-4 border-br-yellow z-[201] opacity-100 scale-100"
+          onClick={(e) => e.stopPropagation()}
         >
-          <X size={20} />
-        </button>
-
-        <div className="bg-br-green p-6 md:p-10 text-center relative overflow-hidden select-none">
-          <div className="absolute top-0 right-0 w-32 h-32 bg-br-yellow opacity-20 blur-2xl rounded-full -translate-y-1/2 translate-x-1/2" />
-          <div className="absolute bottom-0 left-0 w-32 h-32 bg-br-blue opacity-10 blur-2xl rounded-full translate-y-1/2 -translate-x-1/2" />
-          
-          <span className="inline-block bg-br-yellow text-br-blue px-4 py-1 rounded-full text-[10px] font-black uppercase tracking-widest mb-4">{siteConfig.coupon.badge}</span>
-          <h2 className="text-2xl md:text-4xl font-black text-white leading-none uppercase italic tracking-tighter">{siteConfig.coupon.title} <br /><span className="text-br-yellow">{siteConfig.coupon.titleYellow}</span></h2>
+          {modalInnerContent}
         </div>
-
-        <div className="p-6 md:p-10 text-center">
-          <p className="text-br-blue/60 font-medium mb-8 text-sm md:text-base">{siteConfig.coupon.description}</p>
-          
-          <div className="relative group">
-            <div className="absolute -inset-1 bg-gradient-to-r from-br-green via-br-yellow to-br-blue rounded-2xl blur opacity-25 group-hover:opacity-50 transition duration-1000 group-hover:duration-200"></div>
-            <div className="relative flex items-center justify-between gap-2 p-2 bg-gray-50 border-2 border-dashed border-br-green/30 rounded-2xl">
-              <span className="flex-1 font-mono text-xl md:text-2xl font-black text-br-blue tracking-wider pl-4">
-                {couponCode}
-              </span>
-              <button 
-                onClick={copyToClipboard}
-                className={cn(
-                  "px-4 py-2.5 md:px-6 md:py-3 rounded-xl font-black text-[10px] md:text-xs uppercase tracking-widest transition-all flex items-center gap-2",
-                  copied ? "bg-br-green text-white" : "bg-br-yellow text-br-blue hover:bg-[#ebcd00]"
-                )}
-              >
-                {copied ? <CheckCircle2 size={16} /> : <div className="w-4 h-4 bg-br-blue/10 rounded-sm" />}
-                {copied ? siteConfig.coupon.copiedText : siteConfig.coupon.ctaText}
-              </button>
-            </div>
-          </div>
-
-          <button 
-            onClick={() => setIsVisible(false)}
-            className="mt-8 text-br-blue/40 hover:text-br-blue text-xs font-black uppercase tracking-[0.2em] transition-colors"
-          >
-            {siteConfig.coupon.cancelText}
-          </button>
-        </div>
-      </motion.div>
+      ) : (
+        <motion.div 
+          ref={modalRef}
+          initial={{ scale: 0.85, opacity: 0, y: 20 }}
+          animate={{ scale: 1, opacity: 1, y: 0 }}
+          transition={{ type: "spring", damping: 25, stiffness: 200 }}
+          className="relative w-full max-w-md bg-white rounded-[2.5rem] md:rounded-[3rem] overflow-hidden shadow-[0_45px_110px_rgba(0,0,0,0.35)] border-4 border-br-yellow z-[201]"
+          onClick={(e) => e.stopPropagation()}
+        >
+          {modalInnerContent}
+        </motion.div>
+      )}
     </div>
   );
 };
