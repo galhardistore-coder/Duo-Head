@@ -82,7 +82,7 @@ const VideoPlayer = ({ srcId, title, className }: { srcId: string; title: string
         </div>
       ) : (
         <div className="w-full h-full flex items-center justify-center bg-gray-900 group cursor-pointer">
-          <div className="bg-white/10 p-6 rounded-full backdrop-blur-sm animate-pulse">
+          <div className="bg-white/20 p-6 rounded-full animate-pulse">
             <Play className="text-white/20 fill-white" size={40} />
           </div>
         </div>
@@ -183,7 +183,7 @@ const VariationCarousel = () => {
                         <span className="text-sm">🇧🇷</span> EDIÇÃO ESPECIAL
                       </div>
                     ) : (
-                      <div className="absolute top-4 right-4 bg-white/90 backdrop-blur-sm px-3 py-1 rounded-full text-xs font-bold shadow-sm text-gray-800">
+                      <div className="absolute top-4 right-4 bg-white px-3 py-1 rounded-full text-xs font-bold shadow-sm text-gray-800">
                         Disponível
                       </div>
                     )}
@@ -318,6 +318,17 @@ const SectionTitle = ({ children, centered = true, dark = false }: { children: R
 
 export default function App() {
   const [isScrolled, setIsScrolled] = useState(false);
+  const [inIframe, setInIframe] = useState(false);
+
+  useEffect(() => {
+    if (typeof window !== 'undefined') {
+      try {
+        setInIframe(window.self !== window.top);
+      } catch (e) {
+        setInIframe(true);
+      }
+    }
+  }, []);
 
   useEffect(() => {
     const handleScroll = () => setIsScrolled(window.scrollY > 50);
@@ -333,7 +344,9 @@ export default function App() {
       {/* Header / Nav */}
       <nav className={cn(
         "fixed top-12 left-0 right-0 z-50 transition-all duration-300 py-4 px-6 flex justify-between items-center",
-        isScrolled ? "bg-white/95 backdrop-blur-md shadow-lg border-b border-br-green/10" : "bg-transparent"
+        isScrolled 
+          ? (inIframe ? "bg-white shadow-lg border-b border-br-green/10" : "bg-white/95 backdrop-blur-md shadow-lg border-b border-br-green/10") 
+          : "bg-transparent"
       )}>
         <div className="flex items-center gap-2">
           <div className="w-12 h-12 bg-br-green rounded-xl flex items-center justify-center shadow-lg shadow-br-green/20 rotate-3">
@@ -353,9 +366,13 @@ export default function App() {
 
       {/* 1. HERO */}
       <section className="pt-56 pb-24 px-6 relative overflow-hidden">
-        {/* Brazilian Flag Inspired Background Elements */}
-        <div className="absolute top-0 right-0 -translate-y-1/2 translate-x-1/4 w-[600px] h-[600px] bg-br-green/5 rounded-full blur-[100px]" />
-        <div className="absolute bottom-0 left-0 translate-y-1/2 -translate-x-1/4 w-[500px] h-[500px] bg-br-yellow/10 rounded-full blur-[100px]" />
+        {/* Brazilian Flag Inspired Background Elements (disabled in iframe to prevent overlay and rendering page bugs) */}
+        {!inIframe && (
+          <>
+            <div className="absolute top-0 right-0 -translate-y-1/2 translate-x-1/4 w-[600px] h-[600px] bg-br-green/5 rounded-full blur-[100px] pointer-events-none" />
+            <div className="absolute bottom-0 left-0 translate-y-1/2 -translate-x-1/4 w-[500px] h-[500px] bg-br-yellow/10 rounded-full blur-[100px] pointer-events-none" />
+          </>
+        )}
         
         <div className="max-w-6xl mx-auto flex flex-col items-center text-center relative z-10">
           <motion.div
@@ -442,7 +459,7 @@ export default function App() {
             </ul>
           </div>
           <div className="relative">
-            <div className="absolute inset-0 bg-gradient-to-tr from-br-yellow/30 to-transparent rounded-[3rem] blur-3xl" />
+            {!inIframe && <div className="absolute inset-0 bg-gradient-to-tr from-br-yellow/30 to-transparent rounded-[3rem] blur-3xl pointer-events-none" />}
             <motion.div 
               initial={{ opacity: 0, scale: 0.9 }}
               whileInView={{ opacity: 1, scale: 1 }}
@@ -624,8 +641,12 @@ export default function App() {
         </div>
 
         <div className="mt-16 md:mt-20 bg-br-blue text-white rounded-[2.5rem] md:rounded-[3.5rem] p-8 md:p-24 text-center relative overflow-hidden shadow-[0_40px_80px_rgba(1,33,105,0.4)]">
-          <div className="absolute top-0 right-0 w-[500px] h-[500px] bg-br-green/20 blur-[120px] -translate-y-1/2 translate-x-1/2" />
-          <div className="absolute bottom-0 left-0 w-[500px] h-[500px] bg-br-yellow/10 blur-[120px] translate-y-1/2 -translate-x-1/2" />
+          {!inIframe && (
+            <>
+              <div className="absolute top-0 right-0 w-[500px] h-[500px] bg-br-green/20 blur-[120px] -translate-y-1/2 translate-x-1/2 pointer-events-none" />
+              <div className="absolute bottom-0 left-0 w-[500px] h-[500px] bg-br-yellow/10 blur-[120px] translate-y-1/2 -translate-x-1/2 pointer-events-none" />
+            </>
+          )}
           
           <span className="text-br-yellow font-black tracking-[0.2em] md:tracking-[0.3em] uppercase mb-6 block text-[10px] md:text-base animate-pulse relative z-10">Lote especial: Poucas unidades no estoque!</span>
           <h2 className="text-4xl md:text-8xl font-black mb-8 md:mb-10 leading-[0.9] italic uppercase relative z-10">A Revolução <br /><span className="text-br-green">{siteConfig.brand.edition}</span></h2>
