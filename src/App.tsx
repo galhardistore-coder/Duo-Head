@@ -40,6 +40,191 @@ const getIcon = (iconName: string, size = 36) => {
 
 // --- Components ---
 
+const CouponPopup = () => {
+  const [isVisible, setIsVisible] = useState(false);
+  const [copied, setCopied] = useState(false);
+  const [isWordPress, setIsWordPress] = useState(false);
+  const modalRef = React.useRef<HTMLDivElement>(null);
+  const couponCode = siteConfig.coupon.code;
+
+  useEffect(() => {
+    // Robust environment detection
+    if (typeof window !== 'undefined') {
+      try {
+        const isWP = !window.location.hostname.includes('github.io') && 
+                     !window.location.hostname.includes('localhost') && 
+                     !window.location.hostname.includes('run.app') ||
+                     !!document.querySelector('.wp-block-custom-html') ||
+                     window.location.pathname.includes('wp-');
+        setIsWordPress(isWP);
+      } catch (e) {
+        setIsWordPress(true);
+      }
+    }
+
+    // Trigger popup display after 1.5s
+    const timer = setTimeout(() => {
+      setIsVisible(true);
+    }, 1500);
+    return () => clearTimeout(timer);
+  }, []);
+
+  // Safeguard watchdog: if overlay is active but modal element didn't load or remains invisible in DOM after 1 second, remove overlay instantly
+  useEffect(() => {
+    if (isVisible) {
+      const watchdog = setTimeout(() => {
+        const modalElement = modalRef.current;
+        if (!modalElement) {
+          console.warn("CouponPopup safe container not detected in DOM after 1s. Forcing dismissal.");
+          setIsVisible(false);
+          return;
+        }
+
+        // Deep visibility inspection inside WordPress / iframe modes
+        if (typeof window !== 'undefined') {
+          try {
+            const style = window.getComputedStyle(modalElement);
+            if (
+              style.opacity === '0' || 
+              style.visibility === 'hidden' || 
+              style.display === 'none' ||
+              modalElement.offsetHeight === 0
+            ) {
+              console.warn("CouponPopup modal is invisible or layout is 0px. Dismissing to release overlay.");
+              setIsVisible(false);
+            }
+          } catch (e) {
+            // Safe fallback
+          }
+        }
+      }, 1000);
+      return () => clearTimeout(watchdog);
+    }
+  }, [isVisible]);
+
+  // Safeguard: when closed, force full page/app visibility and interaction to prevent grid/blockages in WordPress/Custom HTML blocks
+  useEffect(() => {
+    if (!isVisible) {
+      if (typeof document !== 'undefined') {
+        try {
+          document.body.style.opacity = '1';
+          document.body.style.display = 'block';
+          document.body.style.visibility = 'visible';
+          document.body.style.pointerEvents = 'auto';
+          document.body.style.overflow = 'auto';
+          document.body.style.filter = 'none';
+
+          const rootEl = document.getElementById('root');
+          if (rootEl) {
+            rootEl.style.opacity = '1';
+            rootEl.style.display = 'block';
+            rootEl.style.visibility = 'visible';
+            rootEl.style.pointerEvents = 'auto';
+            rootEl.style.filter = 'none';
+          }
+        } catch (e) {
+          // Failure guard
+        }
+      }
+    }
+  }, [isVisible]);
+
+  const copyToClipboard = () => {
+    if (typeof navigator !== 'undefined' && navigator.clipboard) {
+      navigator.clipboard.writeText(couponCode).then(() => {
+        setCopied(true);
+        setTimeout(() => setCopied(false), 2000);
+      }).catch((err) => {
+        console.error("Clipboard copy failed:", err);
+        setCopied(true);
+        setTimeout(() => setCopied(false), 2000);
+      });
+    } else {
+      setCopied(true);
+      setTimeout(() => setCopied(false), 2000);
+    }
+  };
+
+  const handleOverlayClick = (e: React.MouseEvent) => {
+    if (e.target === e.currentTarget) {
+      setIsVisible(false);
+    }
+  };
+
+  return (
+    <div 
+      id="coupon-popup-wrapper"
+      onClick={handleOverlayClick}
+      className={cn(
+        "fixed inset-0 z-[999] flex items-center justify-center p-6 overflow-y-auto select-none",
+        isWordPress ? "bg-black/75" : "bg-br-blue/40 backdrop-blur-md"
+      )}
+      style={{
+        display: isVisible ? 'flex' : 'none',
+        opacity: isVisible ? 1 : 0,
+        pointerEvents: isVisible ? 'auto' : 'none',
+        visibility: isVisible ? 'visible' : 'hidden'
+      }}
+    >
+      <div 
+        ref={modalRef}
+        id="coupon-modal-card"
+        className="relative w-full max-w-md bg-white rounded-[2.5rem] md:rounded-[3rem] overflow-hidden shadow-[0_45px_110px_rgba(0,0,0,0.35)] border-4 border-br-yellow z-[1000] opacity-100 scale-100"
+        onClick={(e) => e.stopPropagation()}
+      >
+        <button 
+          id="coupon-close-btn"
+          onClick={() => setIsVisible(false)}
+          className="absolute top-4 right-4 md:top-6 md:right-6 p-2 bg-gray-100 rounded-full hover:bg-gray-200 transition-colors text-br-blue z-[1001]"
+          aria-label="Close coupon portal"
+        >
+          <X size={20} />
+        </button>
+
+        <div className="bg-br-green p-6 md:p-10 text-center relative overflow-hidden select-none">
+          <div className="absolute top-0 right-0 w-32 h-32 bg-br-yellow opacity-20 blur-2xl rounded-full -translate-y-1/2 translate-x-1/2" />
+          <div className="absolute bottom-0 left-0 w-32 h-32 bg-br-blue opacity-10 blur-2xl rounded-full translate-y-1/2 -translate-x-1/2" />
+          
+          <span className="inline-block bg-br-yellow text-br-blue px-4 py-1 rounded-full text-[10px] font-black uppercase tracking-widest mb-4">{siteConfig.coupon.badge}</span>
+          <h2 className="text-2xl md:text-4xl font-black text-white leading-none uppercase italic tracking-tighter">{siteConfig.coupon.title} <br /><span className="text-br-yellow">{siteConfig.coupon.titleYellow}</span></h2>
+        </div>
+
+        <div className="p-6 md:p-10 text-center">
+          <p className="text-br-blue/60 font-medium mb-8 text-sm md:text-base">{siteConfig.coupon.description}</p>
+          
+          <div className="relative group">
+            <div className="absolute -inset-1 bg-gradient-to-r from-br-green via-br-yellow to-br-blue rounded-2xl blur opacity-25 group-hover:opacity-50 transition duration-1000 group-hover:duration-200"></div>
+            <div className="relative flex items-center justify-between gap-2 p-2 bg-gray-50 border-2 border-dashed border-br-green/30 rounded-2xl">
+              <span className="flex-1 font-mono text-xl md:text-2xl font-black text-br-blue tracking-wider pl-4">
+                {couponCode}
+              </span>
+              <button 
+                id="coupon-copy-btn"
+                onClick={copyToClipboard}
+                className={cn(
+                  "px-4 py-2.5 md:px-6 md:py-3 rounded-xl font-black text-[10px] md:text-xs uppercase tracking-widest transition-all flex items-center gap-2",
+                  copied ? "bg-br-green text-white" : "bg-br-yellow text-br-blue hover:bg-[#ebcd00]"
+                )}
+              >
+                {copied ? <CheckCircle2 size={16} /> : <div className="w-4 h-4 bg-br-blue/10 rounded-sm" />}
+                {copied ? siteConfig.coupon.copiedText : siteConfig.coupon.ctaText}
+              </button>
+            </div>
+          </div>
+
+          <button 
+            id="coupon-cancel-btn"
+            onClick={() => setIsVisible(false)}
+            className="mt-8 text-br-blue/40 hover:text-br-blue text-xs font-black uppercase tracking-[0.2em] transition-colors"
+          >
+            {siteConfig.coupon.cancelText}
+          </button>
+        </div>
+      </div>
+    </div>
+  );
+};
+
 const VideoPlayer = ({ srcId, title, className }: { srcId: string; title: string, className?: string }) => {
   const [isVisible, setIsVisible] = React.useState(false);
   const containerRef = React.useRef<HTMLDivElement>(null);
@@ -339,6 +524,7 @@ export default function App() {
   return (
     <div className="min-h-screen bg-[#FDFCF0] text-br-blue font-sans overflow-x-hidden">
       
+      <CouponPopup />
       <CountdownTimer />
       
       {/* Header / Nav */}
