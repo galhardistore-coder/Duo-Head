@@ -1,0 +1,166 @@
+{
+  "brand": {
+    "name": "DUO HEAD",
+    "edition": "Brasil Edition",
+    "year": "2026"
+  },
+  "coupon": {
+    "code": "OFER30OFF",
+    "discount": "30%",
+    "badge": "Presente Exclusivo 🇧🇷",
+    "title": "GANHE 30%",
+    "titleYellow": "DE DESCONTO",
+    "description": "Use o cupom abaixo no checkout e garanta o seu Duo Head pelo menor preço do ano!",
+    "ctaText": "COPIAR",
+    "copiedText": "COPIADO!",
+    "cancelText": "Continuar para o site"
+  },
+  "links": {
+    "instagram": "https://www.instagram.com/duohead_/",
+    "shopee": "https://shopee.com.br",
+    "whatsapp": "https://wa.me/5511995250701"
+  },
+  "assets": {
+    "videos": {
+      "hero": "15RzKa3smvsyk_co7LxID7SuRARuzDDl0",
+      "sec1": "16QKWib1xI0R0_SmUiYcQG2GFjxTtbmrR",
+      "sec2": "1cs7tdebI9kbUuvOUefhZI5-yMmzvtLEu"
+    },
+    "images": {
+      "gallery": [
+        "13BwSrdnX1SCiTiwGoQsA3oTwvX7RJpPt",
+        "11ylUirsBP0SV8b68VgoCDB5b5q7nP3YH",
+        "18q2Wt2YwqBigh_xf5jdkBDDReXu1Q0YC",
+        "1pfuBic_7Tz3xebc76veVxW7fuaKvJnDf"
+      ],
+      "product": "1nIHfTSThCKhqD1SZPrnRxNJX2d2e-X2a",
+      "benefits": [
+        "1I1NKanAVYzPJ18-QlHms0r1WMde5AJql",
+        "1xUiky54rlBjAk_NK6C9xAZm5LmoL7Sbv"
+      ],
+      "differentials": "1D4_66cs0015_3g-jATZMHabVVtECYJS-",
+      "social_proof": "11OXKSx3Rfa8fKv58JQcAdC267chsiSRB",
+      "variations": [
+        { "name": "Brasil: Verde e Amarelo", "id": "17E0SmZkUUDcVXXdsLAcYjOCNyhalfsvS" },
+        { "name": "Brasil: Verde e Azul", "id": "10UphD9Vx7Y_LX8n2_8JR08CsvKJc1kLL" },
+        { "name": "Brasil: Azul e Amarelo", "id": "1MQCbj4SrFi_rDhGtrUdpEsN3SWzmLirS" },
+        { "name": "Azul Claro", "id": "15ryUw3pIEII3Jyxv1BqAQeE8bvXGTPoB" },
+        { "name": "Azul Royal", "id": "1rkM1OLeWvDiqIMj4WvuGo3P_vaWUAjb_" },
+        { "name": "Laranja", "id": "1Uwu5yqCIS6QEa8MbLIOvWn58VjUfFfGI" },
+        { "name": "Preto", "id": "1wAUK00YYkwmdwv2BCW-6hxdreE4zGFsS" },
+        { "name": "Rosa", "id": "1fxM22o9RyHa8EFwN2OoanKoHVkG3pZcj" },
+        { "name": "Verde Claro", "id": "1HKKxh3HOfcbtMmL3r0dyEDehBj56r1g1" },
+        { "name": "Verde Escuro", "id": "1XZsZBe4uRydfk1SE_XfnXWg2azxC_0cP" },
+        { "name": "Verde Limão", "id": "1eoB2i4sFE6LXLMRgyvvIy55RJQVmRtJL" },
+        { "name": "Verde Militar", "id": "1IjaxJAzEEsLtFmDIJGpEjiPRf4g5kGPh" }
+      ]
+    }
+  },
+  "hero": {
+    "promoBadge": "Orgulho Nacional",
+    "titleLine1": "O Suporte",
+    "titleLine2": "Mais Vendido",
+    "titleLine3": "Do Brasil",
+    "description": "Autonomia total para raspar a cabeça com perfeição. O Duo Head é a inovação que o brasileiro precisava.",
+    "ctaText": "Aproveitar Oferta"
+  },
+  "problem_solution": {
+    "problemTitle": "Chega de sofrer sozinho",
+    "problemSubtitle": "Por que continuar dependendo dos outros?",
+    "problems": [
+      "Dificuldade total na parte de trás",
+      "Gasto excessivo com barbeiros",
+      "Cortes mal acabados e falhos",
+      "Falta de tempo para ir ao salão",
+      "Dependência de ajuda para o básico"
+    ],
+    "solutionTitle": "Duo Head Brasil",
+    "solutionSubtitle": "Sua liberdade começa aqui"
+  },
+  "benefits": {
+    "sectionTitle": "O que o Brasil já sabe:",
+    "items": [
+      { "title": "Independência", "icon": "ShieldCheck", "desc": "Seja o seu próprio barbeiro com precisão absoluta." },
+      { "title": "Mais Reais no Bolso", "icon": "TrendingUp", "desc": "Economia garantida todos os meses." },
+      { "title": "Alcança Tudo", "icon": "CheckCircle2", "desc": "Guia inteligente que atinge cada ângulo." },
+      { "title": "Pronto em Minutos", "icon": "Clock", "desc": "Agilidade total para o homem moderno." },
+      { "title": "Corte Profissional", "icon": "UserCheck", "desc": "Acabamento de luxo sem sair de casa." },
+      { "title": "Made in Brasil", "icon": "Package", "desc": "Orgulho e qualidade nacional reconhecida." }
+    ]
+  },
+  "differentials": {
+    "sectionTitle": "O que nos torna Incomparáveis?",
+    "items": [
+      { "label": "Tecnologia", "value": "Impressão 3D de Nível Industrial" },
+      { "label": "Logística", "value": "Estoque no ABC e Envio Expresso" },
+      { "label": "Suporte", "value": "Atendimento VIP 100% Brasileiro" },
+      { "label": "Confiança", "value": "Garantia de Satisfação Duo Head" },
+      { "label": "Versatilidade", "value": "Compatível com as Melhores Lâminas" }
+    ]
+  },
+  "social_proof": {
+    "sectionTitle": "Quem usa, recomenda!",
+    "quote": "Simplesmente foda. Antes eu ficava dependendo da minha esposa toda semana, agora faço em 5 minutos enquanto tomo banho. A qualidade é absurda!",
+    "author": "Ricardo Santos",
+    "authorTitle": "Empresário • São Bernardo, SP",
+    "ctaText": "Ver comunidade no Instagram"
+  },
+  "products": {
+    "SUPPORT_ONLY_MACH3": {
+      "name": "Suporte Mach3 (Sem lâmina)",
+      "description": "Apenas o suporte para quem já possui a lâmina Mach3.",
+      "priceOld": "64,90",
+      "priceNew": "45,43",
+      "link": "https://buy.stripe.com/14AcN6ac05ca9FtfoI8k800"
+    },
+    "SUPPORT_ONLY_FUSION5": {
+      "name": "Suporte Fusion5 (Sem lâmina)",
+      "description": "Apenas o suporte para quem já possui a lâmina Fusion5.",
+      "priceOld": "64,90",
+      "priceNew": "45,43",
+      "link": "https://buy.stripe.com/7sY4gAac0342g3R90k8k801"
+    },
+    "SUPPORT_WITH_FUSION5": {
+      "name": "Kit Suporte + Lâmina Fusion5",
+      "description": "Suporte premium + Refil de lâmina Fusion5 incluso.",
+      "priceOld": "114,90",
+      "priceNew": "80,43",
+      "link": "https://buy.stripe.com/eVqbJ2fwkeMKaJx7Wg8k803",
+      "featured": true
+    },
+    "SUPPORT_WITH_MACH3": {
+      "name": "Kit Suporte + Lâmina Mach3",
+      "description": "Suporte premium + Refil de lâmina Mach3 incluso.",
+      "priceOld": "99,90",
+      "priceNew": "69,93",
+      "link": "https://buy.stripe.com/4gM7sMbg4dIG18XekE8k802",
+      "featured": true
+    }
+  },
+  "visuals_section": {
+    "title": "Veja o Duo Head em ação",
+    "description": "Assista como é simples e rápido ter o resultado que você sempre quis.",
+    "ctaText": "Quero este resultado agora"
+  },
+  "delivery_section": [
+    {
+      "icon": "Package",
+      "title": "Envio Ninja",
+      "desc": "Postagem em até 24h. Receba rápido em qualquer lugar."
+    },
+    {
+      "icon": "MapPin",
+      "title": "Retirada VIP",
+      "desc": "Mora no ABC Paulista? Retire em mãos e economize o frete."
+    },
+    {
+      "icon": "ShieldCheck",
+      "title": "Garantia Real",
+      "desc": "Qualidade atestada. Sua satisfação ou seu dinheiro de volta."
+    }
+  ],
+  "footer": {
+    "copyright": "© 2026 Duo Head Brasil. Todos os direitos reservados. Design e Inovação 100% Brasileira.",
+    "subtext": "Enviamos para todo o território nacional com carinho e rapidez."
+  }
+}

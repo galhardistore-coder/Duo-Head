@@ -22,14 +22,28 @@ import {
 } from 'lucide-react';
 import React, { useState, useEffect } from 'react';
 import useEmblaCarousel from 'embla-carousel-react';
-import { cn, ASSETS, getDriveImageUrl, getDriveViewerUrl } from './lib/utils';
+import { cn, ASSETS, getDriveImageUrl, getDriveViewerUrl, siteConfig } from './lib/utils';
+
+// --- Icons Helper ---
+const getIcon = (iconName: string, size = 36) => {
+  switch (iconName) {
+    case 'ShieldCheck': return <ShieldCheck size={size} />;
+    case 'TrendingUp': return <TrendingUp size={size} />;
+    case 'CheckCircle2': return <CheckCircle2 size={size} />;
+    case 'Clock': return <Clock size={size} />;
+    case 'UserCheck': return <UserCheck size={size} />;
+    case 'Package': return <Package size={size} />;
+    case 'MapPin': return <MapPin size={size} className="text-br-blue" />;
+    default: return null;
+  }
+};
 
 // --- Components ---
 
 const CouponPopup = () => {
   const [isVisible, setIsVisible] = useState(false);
   const [copied, setCopied] = useState(false);
-  const couponCode = "OFER30OFF";
+  const couponCode = siteConfig.coupon.code;
 
   useEffect(() => {
     const timer = setTimeout(() => {
@@ -64,12 +78,12 @@ const CouponPopup = () => {
           <div className="absolute top-0 right-0 w-32 h-32 bg-br-yellow opacity-20 blur-2xl rounded-full -translate-y-1/2 translate-x-1/2" />
           <div className="absolute bottom-0 left-0 w-32 h-32 bg-br-blue opacity-10 blur-2xl rounded-full translate-y-1/2 -translate-x-1/2" />
           
-          <span className="inline-block bg-br-yellow text-br-blue px-4 py-1 rounded-full text-[10px] font-black uppercase tracking-widest mb-4">Presente Exclusivo 🇧🇷</span>
-          <h2 className="text-3xl md:text-4xl font-black text-white leading-none uppercase italic tracking-tighter">GANHE 30% <br /><span className="text-br-yellow">DE DESCONTO</span></h2>
+          <span className="inline-block bg-br-yellow text-br-blue px-4 py-1 rounded-full text-[10px] font-black uppercase tracking-widest mb-4">{siteConfig.coupon.badge}</span>
+          <h2 className="text-3xl md:text-4xl font-black text-white leading-none uppercase italic tracking-tighter">{siteConfig.coupon.title} <br /><span className="text-br-yellow">{siteConfig.coupon.titleYellow}</span></h2>
         </div>
 
         <div className="p-6 md:p-10 text-center">
-          <p className="text-br-blue/60 font-medium mb-8 text-sm md:text-base">Use o cupom abaixo no checkout e garanta o seu Duo Head pelo menor preço do ano!</p>
+          <p className="text-br-blue/60 font-medium mb-8 text-sm md:text-base">{siteConfig.coupon.description}</p>
           
           <div className="relative group">
             <div className="absolute -inset-1 bg-gradient-to-r from-br-green via-br-yellow to-br-blue rounded-2xl blur opacity-25 group-hover:opacity-50 transition duration-1000 group-hover:duration-200"></div>
@@ -85,7 +99,7 @@ const CouponPopup = () => {
                 )}
               >
                 {copied ? <CheckCircle2 size={16} /> : <div className="w-4 h-4 bg-br-blue/10 rounded-sm" />}
-                {copied ? "COPIADO!" : "COPIAR"}
+                {copied ? siteConfig.coupon.copiedText : siteConfig.coupon.ctaText}
               </button>
             </div>
           </div>
@@ -94,7 +108,7 @@ const CouponPopup = () => {
             onClick={() => setIsVisible(false)}
             className="mt-8 text-br-blue/40 hover:text-br-blue text-xs font-black uppercase tracking-[0.2em] transition-colors"
           >
-            Continuar para o site
+            {siteConfig.coupon.cancelText}
           </button>
         </div>
       </motion.div>
@@ -400,11 +414,11 @@ export default function App() {
       )}>
         <div className="flex items-center gap-2">
           <div className="w-12 h-12 bg-br-green rounded-xl flex items-center justify-center shadow-lg shadow-br-green/20 rotate-3">
-            <span className="text-br-yellow font-black text-2xl drop-shadow-sm">D</span>
+            <span className="text-br-yellow font-black text-2xl drop-shadow-sm">{siteConfig.brand.name[0]}</span>
           </div>
           <div className="flex flex-col -gap-1">
-            <span className="font-black text-2xl tracking-tighter leading-none text-br-green">DUO HEAD</span>
-            <span className="text-[10px] font-bold tracking-[0.2em] text-br-blue uppercase">Brasil Edition</span>
+            <span className="font-black text-2xl tracking-tighter leading-none text-br-green">{siteConfig.brand.name}</span>
+            <span className="text-[10px] font-bold tracking-[0.2em] text-br-blue uppercase">{siteConfig.brand.edition}</span>
           </div>
         </div>
         <div className="hidden md:flex gap-4">
@@ -427,20 +441,20 @@ export default function App() {
             transition={{ duration: 0.8, ease: "easeOut" }}
           >
             <span className="inline-flex items-center gap-2 bg-br-green text-br-yellow text-xs font-black px-4 py-2 rounded-full mb-8 tracking-[0.2em] uppercase shadow-lg shadow-br-green/20">
-              <span className="text-base">🇧🇷</span> Orgulho Nacional
+              <span className="text-base">🇧🇷</span> {siteConfig.hero.promoBadge}
             </span>
             <h1 className="text-4xl md:text-8xl font-black mb-6 md:mb-8 leading-[0.95] tracking-tighter uppercase italic">
-              O Suporte <br />
-              <span className="text-br-green">Mais Vendido</span> <br />
-              <span className="text-br-yellow bg-br-blue px-4 inline-block mt-2">Do Brasil</span>
+              {siteConfig.hero.titleLine1} <br />
+              <span className="text-br-green">{siteConfig.hero.titleLine2}</span> <br />
+              <span className="text-br-yellow bg-br-blue px-4 inline-block mt-2">{siteConfig.hero.titleLine3}</span>
             </h1>
             <p className="text-lg md:text-2xl text-br-blue/70 mb-10 md:mb-12 max-w-2xl mx-auto font-medium">
-              Autonomia total para raspar a cabeça com perfeição. O <span className="font-bold text-br-green decoration-br-yellow decoration-2 underline-offset-4 underline">Duo Head</span> é a inovação que o brasileiro precisava.
+              Autonomia total para raspar a cabeça com perfeição. O <span className="font-bold text-br-green decoration-br-yellow decoration-2 underline-offset-4 underline">{siteConfig.brand.name.toLowerCase().split(' ').map(w => w.charAt(0).toUpperCase() + w.slice(1)).join(' ')}</span> é a inovação que o brasileiro precisava.
             </p>
             
             <div className="flex flex-col sm:flex-row gap-4 md:gap-5 mb-16 md:mb-20 justify-center">
               <Button href="#precos" variant="yellow" className="w-full sm:w-auto min-w-0 sm:min-w-[320px]">
-                <ShoppingBag size={22} strokeWidth={3} /> Aproveitar Oferta
+                <ShoppingBag size={22} strokeWidth={3} /> {siteConfig.hero.ctaText}
               </Button>
             </div>
           </motion.div>
@@ -491,16 +505,10 @@ export default function App() {
         <div className="absolute top-0 left-0 w-full h-full bg-br-blue opacity-50 z-0" />
         <div className="grid md:grid-cols-2 gap-16 items-center relative z-10">
           <div>
-            <span className="text-br-yellow font-black mb-4 block uppercase tracking-widest">Chega de sofrer sozinho</span>
-            <h2 className="text-4xl md:text-6xl font-black mb-10 leading-tight italic uppercase text-white">Por que continuar dependendo dos outros?</h2>
+            <span className="text-br-yellow font-black mb-4 block uppercase tracking-widest">{siteConfig.problem_solution.problemTitle}</span>
+            <h2 className="text-4xl md:text-6xl font-black mb-10 leading-tight italic uppercase text-white">{siteConfig.problem_solution.problemSubtitle}</h2>
             <ul className="space-y-8">
-              {[
-                "Dificuldade total na parte de trás",
-                "Gasto excessivo com barbeiros",
-                "Cortes mal acabados e falhos",
-                "Falta de tempo para ir ao salão",
-                "Dependência de ajuda para o básico"
-              ].map((item, i) => (
+              {siteConfig.problem_solution.problems.map((item, i) => (
                 <li key={i} className="flex gap-5 items-center">
                   <div className="flex-shrink-0 bg-red-500 text-white p-1 rounded-full shadow-lg shadow-red-500/20">
                     <X size={20} strokeWidth={3} />
@@ -525,8 +533,8 @@ export default function App() {
                 referrerPolicy="no-referrer"
               />
               <div className="absolute bottom-0 left-0 right-0 p-10 bg-gradient-to-t from-br-blue to-transparent">
-                <p className="text-br-yellow font-black text-3xl uppercase italic leading-none mb-1">Duo Head Brasil</p>
-                <p className="text-white/70 font-bold uppercase tracking-widest text-sm">Sua liberdade começa aqui</p>
+                <p className="text-br-yellow font-black text-3xl uppercase italic leading-none mb-1">{siteConfig.problem_solution.solutionTitle}</p>
+                <p className="text-white/70 font-bold uppercase tracking-widest text-sm">{siteConfig.problem_solution.solutionSubtitle}</p>
               </div>
             </motion.div>
           </div>
@@ -535,16 +543,9 @@ export default function App() {
 
       {/* 5. BENEFÍCIOS */}
       <Section id="beneficios" className="bg-[#f0f9f3]">
-        <SectionTitle>O que o <span className="text-br-green">Brasil</span> já sabe:</SectionTitle>
+        <SectionTitle>{siteConfig.benefits.sectionTitle}</SectionTitle>
         <div className="grid md:grid-cols-3 gap-10">
-          {[
-            { title: "Independência", icon: <ShieldCheck size={36} />, desc: "Seja o seu próprio barbeiro com precisão absoluta." },
-            { title: "Mais Reais no Bolso", icon: <TrendingUp size={36} />, desc: "Economia garantida todos os meses." },
-            { title: "Alcança Tudo", icon: <CheckCircle2 size={36} />, desc: "Guia inteligente que atinge cada ângulo." },
-            { title: "Pronto em Minutos", icon: <Clock size={36} />, desc: "Agilidade total para o homem moderno." },
-            { title: "Corte Profissional", icon: <UserCheck size={36} />, desc: "Acabamento de luxo sem sair de casa." },
-            { title: "Made in Brasil", icon: <Package size={36} />, desc: "Orgulho e qualidade nacional reconhecida." }
-          ].map((benefit, i) => (
+          {siteConfig.benefits.items.map((benefit, i) => (
             <motion.div
               key={i}
               initial={{ opacity: 0, y: 30 }}
@@ -554,7 +555,7 @@ export default function App() {
               className="bg-white p-6 md:p-10 rounded-[2rem] md:rounded-[2.5rem] shadow-xl shadow-br-green/5 hover:shadow-br-green/10 transition-all border border-br-green/5 group"
             >
               <div className="text-br-green mb-6 md:mb-8 inline-block p-4 md:p-5 bg-br-green/10 rounded-[1.2rem] md:rounded-[1.5rem] group-hover:scale-110 transition-transform">
-                {benefit.icon}
+                {getIcon(benefit.icon, 36)}
               </div>
               <h3 className="text-xl md:text-2xl font-black mb-3 md:mb-4 uppercase italic tracking-tight text-br-blue">{benefit.title}</h3>
               <p className="text-br-blue/60 text-base md:text-lg leading-relaxed font-medium">{benefit.desc}</p>
@@ -580,15 +581,9 @@ export default function App() {
             />
           </motion.div>
           <div>
-            <SectionTitle centered={false}>O que nos torna <br /><span className="text-br-green">Incomparáveis?</span></SectionTitle>
+            <SectionTitle centered={false}>{siteConfig.differentials.sectionTitle}</SectionTitle>
             <div className="space-y-4">
-              {[
-                { label: "Tecnologia", value: "Impressão 3D de Nível Industrial" },
-                { label: "Logística", value: "Estoque no ABC e Envio Expresso" },
-                { label: "Suporte", value: "Atendimento VIP 100% Brasileiro" },
-                { label: "Confiança", value: "Garantia de Satisfação Duo Head" },
-                { label: "Versatilidade", value: "Compatível com as Melhores Lâminas" }
-              ].map((item, i) => (
+              {siteConfig.differentials.items.map((item, i) => (
                 <div key={i} className="flex gap-5 items-center p-5 bg-[#f0f9f3] rounded-2xl border border-br-green/5 hover:border-br-green/20 transition-colors">
                   <div className="bg-white p-3 rounded-xl shadow-md">
                     <CheckCircle2 size={24} className="text-br-green" strokeWidth={3} />
@@ -607,21 +602,21 @@ export default function App() {
       {/* 7. PROVA SOCIAL */}
       <Section className="bg-br-blue relative overflow-hidden">
         <div className="absolute top-0 right-0 w-full h-full bg-[radial-gradient(circle_at_top_right,rgba(0,151,57,0.1),transparent)] z-0" />
-        <SectionTitle dark>Quem usa, <span className="text-white">recomenda!</span></SectionTitle>
+        <SectionTitle dark>{siteConfig.social_proof.sectionTitle}</SectionTitle>
         <div className="grid md:grid-cols-2 gap-12 items-center relative z-10">
           <div className="space-y-10">
             <div className="bg-white p-10 rounded-[2.5rem] shadow-2xl relative border-t-8 border-br-yellow transform -rotate-1">
-              <p className="text-2xl italic mb-8 font-medium text-br-blue">"Simplesmente foda. Antes eu ficava dependendo da minha esposa toda semana, agora faço em 5 minutos enquanto tomo banho. A qualidade é absurda!"</p>
+              <p className="text-2xl italic mb-8 font-medium text-br-blue">"{siteConfig.social_proof.quote}"</p>
               <div className="flex items-center gap-5">
-                <div className="w-14 h-14 bg-br-green text-br-yellow rounded-full flex items-center justify-center font-black text-xl shadow-lg shadow-br-green/20">R</div>
+                <div className="w-14 h-14 bg-br-green text-br-yellow rounded-full flex items-center justify-center font-black text-xl shadow-lg shadow-br-green/20">{siteConfig.social_proof.author[0]}</div>
                 <div>
-                  <p className="font-black text-xl text-br-blue">Ricardo Santos</p>
-                  <p className="text-sm text-br-green font-bold uppercase tracking-widest">Empresário • São Bernardo, SP</p>
+                  <p className="font-black text-xl text-br-blue">{siteConfig.social_proof.author}</p>
+                  <p className="text-sm text-br-green font-bold uppercase tracking-widest">{siteConfig.social_proof.authorTitle}</p>
                 </div>
               </div>
             </div>
             <Button href={ASSETS.LINKS.INSTAGRAM} variant="outline" className="w-full border-white text-white hover:bg-white hover:text-br-blue">
-              <Instagram size={24} /> Ver comunidade no Instagram
+              <Instagram size={24} /> {siteConfig.social_proof.ctaText}
             </Button>
           </div>
           <div className="rounded-[3rem] overflow-hidden shadow-2xl border-4 border-br-green/30 transform rotate-1">
@@ -641,7 +636,7 @@ export default function App() {
         <VariationCarousel />
       </Section>
       <Section dark className="bg-black/95">
-        <SectionTitle dark>Veja o <span className="text-br-green">Duo Head</span> em ação</SectionTitle>
+        <SectionTitle dark>{siteConfig.visuals_section.title}</SectionTitle>
         <div className="max-w-4xl mx-auto flex flex-col items-center">
           <VideoPlayer 
             srcId={ASSETS.VIDEOS.SEC1} 
@@ -649,9 +644,9 @@ export default function App() {
             className="border-8 border-white/5 shadow-2xl"
           />
           <div className="mt-12 text-center">
-            <p className="text-white/60 text-lg mb-8 font-medium">Assista como é simples e rápido ter o resultado que você sempre quis.</p>
+            <p className="text-white/60 text-lg mb-8 font-medium">{siteConfig.visuals_section.description}</p>
             <Button href="#precos" variant="yellow">
-              Quero este resultado agora
+              {siteConfig.visuals_section.ctaText}
             </Button>
           </div>
         </div>
@@ -710,7 +705,7 @@ export default function App() {
           <div className="absolute bottom-0 left-0 w-[500px] h-[500px] bg-br-yellow/10 blur-[120px] translate-y-1/2 -translate-x-1/2" />
           
           <span className="text-br-yellow font-black tracking-[0.2em] md:tracking-[0.3em] uppercase mb-6 block text-[10px] md:text-base animate-pulse relative z-10">Lote especial: Poucas unidades no estoque!</span>
-          <h2 className="text-4xl md:text-8xl font-black mb-8 md:mb-10 leading-[0.9] italic uppercase relative z-10">A Revolução <br /><span className="text-br-green">Brasil Edition</span></h2>
+          <h2 className="text-4xl md:text-8xl font-black mb-8 md:mb-10 leading-[0.9] italic uppercase relative z-10">A Revolução <br /><span className="text-br-green">{siteConfig.brand.edition}</span></h2>
           
           <div className="flex flex-col sm:flex-row gap-4 md:gap-6 justify-center max-w-4xl mx-auto relative z-10">
             <Button href="#precos" variant="yellow" className="w-full sm:w-auto min-w-0 sm:min-w-[320px] py-6 md:py-7 h-auto text-lg md:text-xl shadow-2xl">
@@ -727,42 +722,37 @@ export default function App() {
       {/* 11. ENTREGA & INFOS */}
       <Section className="bg-white border-b border-gray-100">
         <div className="grid grid-cols-1 md:grid-cols-3 gap-16 text-center">
-          <div className="flex flex-col items-center group">
-            <div className="bg-br-green/10 p-8 rounded-[2rem] mb-8 group-hover:bg-br-green group-hover:text-br-yellow transition-all duration-300">
-              <Package size={48} strokeWidth={2.5} className="text-br-green group-hover:text-br-yellow" />
+          {siteConfig.delivery_section.map((item, i) => (
+            <div key={i} className="flex flex-col items-center group">
+              <div className={cn(
+                "p-8 rounded-[2rem] mb-8 transition-all duration-300",
+                item.icon === "Package" && "bg-br-green/10 group-hover:bg-br-green group-hover:text-br-yellow",
+                item.icon === "MapPin" && "bg-br-yellow/20 group-hover:bg-br-yellow group-hover:text-br-blue",
+                item.icon === "ShieldCheck" && "bg-br-blue/10 group-hover:bg-br-blue group-hover:text-white"
+              )}>
+                {item.icon === "Package" && <Package size={48} strokeWidth={2.5} className="text-br-green group-hover:text-br-yellow" />}
+                {item.icon === "MapPin" && <MapPin size={48} strokeWidth={2.5} className="text-br-blue" />}
+                {item.icon === "ShieldCheck" && <ShieldCheck size={48} strokeWidth={2.5} className="text-br-blue group-hover:text-white" />}
+              </div>
+              <h3 className="text-3xl font-black mb-3 italic uppercase text-br-blue">{item.title}</h3>
+              <p className="text-br-blue/50 font-medium text-lg">{item.desc}</p>
             </div>
-            <h3 className="text-3xl font-black mb-3 italic uppercase text-br-blue">Envio Ninja</h3>
-            <p className="text-br-blue/50 font-medium text-lg">Postagem em até 24h. <br />Receba rápido em qualquer lugar.</p>
-          </div>
-          <div className="flex flex-col items-center group">
-            <div className="bg-br-yellow/20 p-8 rounded-[2rem] mb-8 group-hover:bg-br-yellow group-hover:text-br-blue transition-all duration-300">
-              <MapPin size={48} strokeWidth={2.5} className="text-br-blue" />
-            </div>
-            <h3 className="text-3xl font-black mb-3 italic uppercase text-br-blue">Retirada VIP</h3>
-            <p className="text-br-blue/50 font-medium text-lg">Mora no ABC Paulista? <br />Retire em mãos e economize o frete.</p>
-          </div>
-          <div className="flex flex-col items-center group">
-            <div className="bg-br-blue/10 p-8 rounded-[2rem] mb-8 group-hover:bg-br-blue group-hover:text-white transition-all duration-300">
-              <ShieldCheck size={48} strokeWidth={2.5} className="text-br-blue group-hover:text-white" />
-            </div>
-            <h3 className="text-3xl font-black mb-3 italic uppercase text-br-blue">Garantia Real</h3>
-            <p className="text-br-blue/50 font-medium text-lg">Qualidade atestada. <br />Sua satisfação ou seu dinheiro de volta.</p>
-          </div>
+          ))}
         </div>
       </Section>
       {/* Footer */}
       <footer className="py-20 px-6 bg-br-blue text-white text-center pb-32">
         <div className="flex flex-col items-center justify-center gap-4 mb-10">
           <div className="w-16 h-16 bg-br-green rounded-2xl flex items-center justify-center shadow-lg shadow-br-green/20 md:rotate-3">
-            <span className="text-br-yellow font-black text-3xl">D</span>
+            <span className="text-br-yellow font-black text-3xl">{siteConfig.brand.name[0]}</span>
           </div>
           <div className="flex flex-col items-center">
-            <span className="font-black text-3xl tracking-tighter text-br-green">DUO HEAD</span>
-            <span className="text-xs font-bold tracking-[0.3em] text-white/50 uppercase">Brasil Edition • 2026</span>
+            <span className="font-black text-3xl tracking-tighter text-br-green">{siteConfig.brand.name}</span>
+            <span className="text-xs font-bold tracking-[0.3em] text-white/50 uppercase">{siteConfig.brand.edition} • {siteConfig.brand.year}</span>
           </div>
         </div>
         <div className="max-w-2xl mx-auto text-white/40 mb-10 text-sm">
-          <p>© 2026 Duo Head Brasil. Todos os direitos reservados. Design e Inovação 100% Brasileira. <br />Enviamos para todo o território nacional com carinho e rapidez.</p>
+          <p>{siteConfig.footer.copyright} <br />{siteConfig.footer.subtext}</p>
         </div>
         <div className="flex justify-center gap-8">
           <a href={ASSETS.LINKS.INSTAGRAM} target="_blank" rel="noopener noreferrer" className="p-3 bg-white/5 rounded-full hover:bg-white/10 text-white transition-all hover:scale-110"><Instagram /></a>
