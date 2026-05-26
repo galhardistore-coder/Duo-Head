@@ -23,7 +23,7 @@ import {
 import React, { useState, useEffect } from 'react';
 import useEmblaCarousel from 'embla-carousel-react';
 import { cn, ASSETS, getDriveImageUrl, getDriveViewerUrl, siteConfig } from './lib/utils';
-import yampiLinks from './data/yampi-links.json';
+import { yampiLinks } from './data/yampi-links';
 
 // --- Icons Helper ---
 const getIcon = (iconName: string, size = 36) => {

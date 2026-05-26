@@ -1,4 +1,4 @@
-{
+export const yampiLinks: Record<string, Record<string, string>> = {
   "SUPPORT_WITH_FUSION5": {
     "Brasil: Verde e Amarelo": "https://duo-head-suporte-duplo-para-laminas.pay.yampi.com.br/r/8QOPT2L6CY",
     "Brasil: Azul e Amarelo": "https://duo-head-suporte-duplo-para-laminas.pay.yampi.com.br/r/AIP8JOZ3L6",
@@ -55,4 +55,4 @@
     "Verde Militar": "https://duo-head-suporte-duplo-para-laminas.pay.yampi.com.br/r/CTX41KT5BD",
     "Rosa": "https://duo-head-suporte-duplo-para-laminas.pay.yampi.com.br/r/58FRVRN7GY"
   }
-}
+};
