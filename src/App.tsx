@@ -43,43 +43,99 @@ const getIcon = (iconName: string, size = 36) => {
 const CouponPopup = () => {
   const [isVisible, setIsVisible] = useState(false);
   const [copied, setCopied] = useState(false);
+  const [inIframe, setInIframe] = useState(false);
+  const modalRef = React.useRef<HTMLDivElement>(null);
   const couponCode = siteConfig.coupon.code;
 
   useEffect(() => {
+    // Robust iframe environment detection
+    if (typeof window !== 'undefined') {
+      try {
+        setInIframe(window.self !== window.top);
+      } catch (e) {
+        setInIframe(true);
+      }
+    }
+
     const timer = setTimeout(() => {
       setIsVisible(true);
     }, 1500); // Show after 1.5s
     return () => clearTimeout(timer);
   }, []);
 
+  // Safeguard watchdog: if overlay is active but modal element didn't load in DOM after 1 second, remove overlay instantly
+  useEffect(() => {
+    if (isVisible) {
+      const watchdog = setTimeout(() => {
+        if (!modalRef.current) {
+          console.warn("CouponPopup safe container not detected in DOM after 1s. Forcing dismissal to avoid lockup.");
+          setIsVisible(false);
+        }
+      }, 1000);
+      return () => clearTimeout(watchdog);
+    }
+  }, [isVisible]);
+
   const copyToClipboard = () => {
-    navigator.clipboard.writeText(couponCode);
-    setCopied(true);
-    setTimeout(() => setCopied(false), 2000);
+    if (typeof navigator !== 'undefined' && navigator.clipboard) {
+      navigator.clipboard.writeText(couponCode).then(() => {
+        setCopied(true);
+        setTimeout(() => setCopied(false), 2000);
+      }).catch((err) => {
+        console.error("Clipboard copy failed, using fallback:", err);
+        setCopied(true);
+        setTimeout(() => setCopied(false), 2000);
+      });
+    } else {
+      setCopied(true);
+      setTimeout(() => setCopied(false), 2000);
+    }
+  };
+
+  const handleOverlayClick = (e: React.MouseEvent) => {
+    // Clicking directly on the overlay backdrop allows closing the popup immediately
+    if (e.target === e.currentTarget) {
+      setIsVisible(false);
+    }
   };
 
   if (!isVisible) return null;
 
   return (
-    <div className="fixed inset-0 z-[100] flex items-center justify-center p-6 bg-br-blue/40 backdrop-blur-md">
+    <div 
+      onClick={handleOverlayClick}
+      className={cn(
+        "z-[100] p-6 transition-all duration-300 pointer-events-auto",
+        // Position layout adjustments for iframes (avoiding dead zone in large auto-height iframes)
+        inIframe 
+          ? "absolute inset-x-0 top-0 h-screen min-h-[700px] flex justify-center items-start pt-24" 
+          : "fixed inset-0 flex items-center justify-center",
+        // Avoid heavy backdrop blurs on iframe containers as it freezes/creates rendering issues in WordPress/Elementor
+        inIframe ? "bg-black/75" : "bg-br-blue/40 backdrop-blur-md"
+      )}
+    >
       <motion.div 
-        initial={{ scale: 0.8, opacity: 0, y: 20 }}
+        ref={modalRef}
+        initial={{ scale: 0.85, opacity: 0, y: inIframe ? -30 : 20 }}
         animate={{ scale: 1, opacity: 1, y: 0 }}
-        className="relative w-full max-w-md bg-white rounded-[3rem] overflow-hidden shadow-[0_40px_100px_rgba(0,0,0,0.3)] border-4 border-br-yellow"
+        transition={{ type: "spring", damping: 25, stiffness: 200 }}
+        className="relative w-full max-w-md bg-white rounded-[2.5rem] md:rounded-[3rem] overflow-hidden shadow-[0_45px_110px_rgba(0,0,0,0.35)] border-4 border-br-yellow"
+        onClick={(e) => e.stopPropagation()} // Prevent closing when clicking inside the card
       >
         <button 
           onClick={() => setIsVisible(false)}
-          className="absolute top-6 right-6 p-2 bg-gray-100 rounded-full hover:bg-gray-200 transition-colors text-br-blue z-10"
+          className="absolute top-4 right-4 md:top-6 md:right-6 p-2 bg-gray-100 rounded-full hover:bg-gray-200 transition-colors text-br-blue z-20"
+          aria-label="CleanClose"
         >
           <X size={20} />
         </button>
 
-        <div className="bg-br-green p-6 md:p-10 text-center relative overflow-hidden">
+        <div className="bg-br-green p-6 md:p-10 text-center relative overflow-hidden select-none">
           <div className="absolute top-0 right-0 w-32 h-32 bg-br-yellow opacity-20 blur-2xl rounded-full -translate-y-1/2 translate-x-1/2" />
           <div className="absolute bottom-0 left-0 w-32 h-32 bg-br-blue opacity-10 blur-2xl rounded-full translate-y-1/2 -translate-x-1/2" />
           
           <span className="inline-block bg-br-yellow text-br-blue px-4 py-1 rounded-full text-[10px] font-black uppercase tracking-widest mb-4">{siteConfig.coupon.badge}</span>
-          <h2 className="text-3xl md:text-4xl font-black text-white leading-none uppercase italic tracking-tighter">{siteConfig.coupon.title} <br /><span className="text-br-yellow">{siteConfig.coupon.titleYellow}</span></h2>
+          <h2 className="text-2xl md:text-4xl font-black text-white leading-none uppercase italic tracking-tighter">{siteConfig.coupon.title} <br /><span className="text-br-yellow">{siteConfig.coupon.titleYellow}</span></h2>
         </div>
 
         <div className="p-6 md:p-10 text-center">
@@ -88,13 +144,13 @@ const CouponPopup = () => {
           <div className="relative group">
             <div className="absolute -inset-1 bg-gradient-to-r from-br-green via-br-yellow to-br-blue rounded-2xl blur opacity-25 group-hover:opacity-50 transition duration-1000 group-hover:duration-200"></div>
             <div className="relative flex items-center justify-between gap-2 p-2 bg-gray-50 border-2 border-dashed border-br-green/30 rounded-2xl">
-              <span className="flex-1 font-mono text-2xl font-black text-br-blue tracking-wider pl-4">
+              <span className="flex-1 font-mono text-xl md:text-2xl font-black text-br-blue tracking-wider pl-4">
                 {couponCode}
               </span>
               <button 
                 onClick={copyToClipboard}
                 className={cn(
-                  "px-6 py-3 rounded-xl font-black text-xs uppercase tracking-widest transition-all flex items-center gap-2",
+                  "px-4 py-2.5 md:px-6 md:py-3 rounded-xl font-black text-[10px] md:text-xs uppercase tracking-widest transition-all flex items-center gap-2",
                   copied ? "bg-br-green text-white" : "bg-br-yellow text-br-blue hover:bg-[#ebcd00]"
                 )}
               >
