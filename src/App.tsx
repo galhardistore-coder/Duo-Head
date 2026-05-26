@@ -41,6 +41,16 @@ const getIcon = (iconName: string, size = 36) => {
 // --- Components ---
 
 const CouponPopup = () => {
+  const [inIframe] = useState(() => {
+    if (typeof window !== 'undefined') {
+      try {
+        return window.self !== window.top;
+      } catch (e) {
+        return true;
+      }
+    }
+    return false;
+  });
   const [isVisible, setIsVisible] = useState(false);
   const [copied, setCopied] = useState(false);
   const [isWordPress, setIsWordPress] = useState(false);
@@ -48,6 +58,11 @@ const CouponPopup = () => {
   const couponCode = siteConfig.coupon.code;
 
   useEffect(() => {
+    // If inside an iframe, disable the popup completely
+    if (inIframe) {
+      return;
+    }
+
     // Robust environment detection
     if (typeof window !== 'undefined') {
       try {
@@ -67,10 +82,11 @@ const CouponPopup = () => {
       setIsVisible(true);
     }, 1500);
     return () => clearTimeout(timer);
-  }, []);
+  }, [inIframe]);
 
   // Safeguard watchdog: if overlay is active but modal element didn't load or remains invisible in DOM after 1 second, remove overlay instantly
   useEffect(() => {
+    if (inIframe) return;
     if (isVisible) {
       const watchdog = setTimeout(() => {
         const modalElement = modalRef.current;
@@ -100,10 +116,11 @@ const CouponPopup = () => {
       }, 1000);
       return () => clearTimeout(watchdog);
     }
-  }, [isVisible]);
+  }, [isVisible, inIframe]);
 
   // Safeguard: when closed, force full page/app visibility and interaction to prevent grid/blockages in WordPress/Custom HTML blocks
   useEffect(() => {
+    if (inIframe) return;
     if (!isVisible) {
       if (typeof document !== 'undefined') {
         try {
@@ -127,7 +144,7 @@ const CouponPopup = () => {
         }
       }
     }
-  }, [isVisible]);
+  }, [isVisible, inIframe]);
 
   const copyToClipboard = () => {
     if (typeof navigator !== 'undefined' && navigator.clipboard) {
@@ -150,6 +167,10 @@ const CouponPopup = () => {
       setIsVisible(false);
     }
   };
+
+  if (inIframe) {
+    return null;
+  }
 
   return (
     <div 
