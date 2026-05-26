@@ -23,6 +23,7 @@ import {
 import React, { useState, useEffect } from 'react';
 import useEmblaCarousel from 'embla-carousel-react';
 import { cn, ASSETS, getDriveImageUrl, getDriveViewerUrl, siteConfig } from './lib/utils';
+import yampiLinks from './data/yampi-links.json';
 
 // --- Icons Helper ---
 const getIcon = (iconName: string, size = 36) => {
@@ -313,6 +314,166 @@ const SectionTitle = ({ children, centered = true, dark = false }: { children: R
     {children}
   </h2>
 );
+
+interface Product {
+  name: string;
+  description: string;
+  priceOld: string;
+  priceNew: string;
+  link: string;
+  featured?: boolean;
+}
+
+const ProductCard = ({ 
+  productKey, 
+  product, 
+  index 
+}: { 
+  productKey: string; 
+  product: Product; 
+  index: number; 
+  key?: React.Key;
+}) => {
+  const [selectedColor, setSelectedColor] = useState("Brasil: Verde e Amarelo");
+
+  // Get current purchase url from loaded yampiLinks
+  const purchaseUrl = (yampiLinks as any)[productKey]?.[selectedColor] || product.link;
+
+  const copaColors = [
+    { name: "Brasil: Verde e Amarelo", style: "bg-gradient-to-r from-[#009b3a] to-[#fedf00]" },
+    { name: "Brasil: Verde e Azul", style: "bg-gradient-to-r from-[#009b3a] to-[#002776]" },
+    { name: "Brasil: Azul e Amarelo", style: "bg-gradient-to-r from-[#002776] to-[#fedf00]" }
+  ];
+
+  const premiumColors = [
+    { name: "Preto", style: "bg-[#111] border border-gray-400" },
+    { name: "Azul Claro", style: "bg-[#0099ff]" },
+    { name: "Azul Royal", style: "bg-[#0b1c5c]" },
+    { name: "Laranja", style: "bg-[#ff6600]" },
+    { name: "Verde Claro", style: "bg-[#1ae5be]" },
+    { name: "Verde Escuro", style: "bg-[#015249]" },
+    { name: "Verde Limão", style: "bg-[#ccff00]" },
+    { name: "Verde Militar", style: "bg-[#4B5320]" },
+    { name: "Rosa", style: "bg-[#fc24a7]" }
+  ];
+
+  return (
+    <motion.div
+      initial={{ opacity: 0, y: 30 }}
+      whileInView={{ opacity: 1, y: 0 }}
+      viewport={{ once: true }}
+      transition={{ delay: index * 0.1 }}
+      className={cn(
+        "relative group flex flex-col bg-white rounded-[2rem] md:rounded-[2.5rem] p-6 md:p-8 shadow-xl border-2 transition-all duration-300 hover:scale-[1.02]",
+        product.featured ? "border-br-yellow ring-4 ring-br-yellow/10" : "border-gray-50"
+      )}
+    >
+      {product.featured && (
+        <div className="absolute -top-4 left-1/2 -translate-x-1/2 bg-br-yellow text-br-blue font-black px-6 py-2 rounded-full text-xs uppercase tracking-[0.2em] shadow-lg whitespace-nowrap z-10 animate-bounce">
+          Destaque da Copa
+        </div>
+      )}
+      
+      <div className="flex-1 flex flex-col justify-between">
+        <div>
+          <h3 className="text-2xl font-black text-br-blue leading-[1.1] mb-2 uppercase italic">{product.name}</h3>
+          <p className="text-br-blue/60 text-sm mb-6 font-medium leading-tight">{product.description}</p>
+          
+          <div className="mb-6 bg-gray-50/50 p-4 rounded-2xl border border-gray-100/60">
+            <span className="text-gray-400 text-xs font-bold line-through block">De R$ {product.priceOld}</span>
+            <div className="flex items-baseline gap-1 mt-1">
+              <span className="text-br-blue font-black text-sm">R$</span>
+              <span className="text-4xl md:text-5xl font-black text-br-green tracking-tighter leading-none">{product.priceNew.split(',')[0]}</span>
+              <span className="text-xl md:text-2xl font-black text-br-green tracking-tighter">,{product.priceNew.split(',')[1]}</span>
+            </div>
+          </div>
+        </div>
+
+        <div>
+          {/* Seleção de cores - Destaque Copa do Mundo */}
+          <div className="mb-6">
+            <p className="text-xs font-black uppercase text-br-green tracking-wider mb-3 flex items-center gap-1">
+              <span>🇧🇷</span> EDIÇÃO COPA DO MUNDO:
+            </p>
+            <div className="flex flex-wrap gap-2.5 mb-5">
+              {copaColors.map((color) => {
+                const active = selectedColor === color.name;
+                return (
+                  <button
+                    key={color.name}
+                    onClick={() => setSelectedColor(color.name)}
+                    title={color.name}
+                    type="button"
+                    className={cn(
+                      "relative w-9 h-9 rounded-full transition-all duration-300 flex items-center justify-center cursor-pointer",
+                      color.style,
+                      active 
+                        ? "ring-4 ring-br-blue scale-110 shadow-lg shadow-br-blue/20" 
+                        : "hover:scale-105 opacity-85 hover:opacity-100 ring-2 ring-gray-200"
+                    )}
+                  >
+                    {active && (
+                      <span className="absolute -top-1 -right-1 flex h-3.5 w-3.5 z-20">
+                        <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-br-green opacity-75"></span>
+                        <span className="relative inline-flex rounded-full h-3.5 w-3.5 bg-br-green border-2 border-white"></span>
+                      </span>
+                    )}
+                  </button>
+                );
+              })}
+            </div>
+
+            <label className="block text-xs font-black uppercase text-br-blue/60 tracking-wider mb-2">
+              OU OUTRA COR PREMIUM:
+            </label>
+            <div className="relative">
+              <select
+                value={premiumColors.some(c => c.name === selectedColor) ? selectedColor : ""}
+                onChange={(e) => {
+                  if (e.target.value) {
+                    setSelectedColor(e.target.value);
+                  }
+                }}
+                className="w-full bg-gray-50 border-2 border-dashed border-gray-200 text-br-blue/80 font-bold py-3 px-4 rounded-xl text-xs appearance-none focus:outline-none focus:border-br-green cursor-pointer"
+              >
+                <option value="" disabled className="text-gray-400">-- Selecione cores sólidas --</option>
+                {premiumColors.map((color) => (
+                  <option key={color.name} value={color.name}>
+                    {color.name}
+                  </option>
+                ))}
+              </select>
+              <div className="pointer-events-none absolute inset-y-0 right-0 flex items-center px-4 text-br-blue/60">
+                <svg className="fill-current h-4 w-4" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20">
+                  <path d="M9.293 12.95l.707.707L15.657 8l-1.414-1.414L10 10.828 5.757 6.586 4.343 8z"/>
+                </svg>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      
+      {/* Botão de Compra com link dinâmico da Yampi */}
+      <Button 
+        href={purchaseUrl} 
+        variant={product.featured ? 'yellow' : 'primary'} 
+        className="w-full py-5 text-sm font-black shadow-lg transition-all"
+      >
+        Comprar Agora
+      </Button>
+      
+      {/* Selecionado status */}
+      <div className="mt-3 text-center text-[10px] font-black uppercase tracking-widest text-br-green/80 flex items-center justify-center gap-1">
+        <span className="h-1.5 w-1.5 rounded-full bg-br-green" />
+        Tom: {selectedColor.replace('Brasil: ', '')}
+      </div>
+
+      <div className="mt-3 flex items-center justify-center gap-2 text-br-blue/40 text-[10px] font-bold uppercase tracking-widest">
+        <ShieldCheck size={14} className="text-br-green" /> Checkout Seguro Yampi
+      </div>
+    </motion.div>
+  );
+};
 
 // --- Main Application ---
 
@@ -622,46 +783,13 @@ export default function App() {
         <SectionTitle>Escolha o seu <span className="text-br-green">Duo Head</span></SectionTitle>
         
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 md:gap-6 max-w-7xl mx-auto items-stretch">
-          {(Object.values((ASSETS as any).PRODUCTS) as any[]).map((product, i) => (
-            <motion.div
-              key={i}
-              initial={{ opacity: 0, y: 30 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true }}
-              transition={{ delay: i * 0.1 }}
-              className={cn(
-                "relative group flex flex-col bg-white rounded-[2rem] md:rounded-[2.5rem] p-6 md:p-8 shadow-xl border-2 transition-all duration-300 hover:scale-[1.02]",
-                product.featured ? "border-br-yellow ring-4 ring-br-yellow/10" : "border-gray-50"
-              )}
-            >
-              {product.featured && (
-                <div className="absolute -top-4 left-1/2 -translate-x-1/2 bg-br-yellow text-br-blue font-black px-6 py-2 rounded-full text-xs uppercase tracking-[0.2em] shadow-lg whitespace-nowrap z-10">
-                  Mais Vendido
-                </div>
-              )}
-              
-              <div className="flex-1">
-                <h3 className="text-2xl font-black text-br-blue leading-[1.1] mb-2 uppercase italic">{product.name}</h3>
-                <p className="text-br-blue/60 text-sm mb-8 font-medium leading-tight">{product.description}</p>
-                
-                <div className="mb-8">
-                  <span className="text-gray-400 text-sm font-bold line-through block">De R$ {product.priceOld}</span>
-                  <div className="flex items-baseline gap-1 mt-1">
-                    <span className="text-br-blue font-black text-lg">R$</span>
-                    <span className="text-5xl font-black text-br-green tracking-tighter leading-none">{product.priceNew.split(',')[0]}</span>
-                    <span className="text-2xl font-black text-br-green tracking-tighter">,{product.priceNew.split(',')[1]}</span>
-                  </div>
-                </div>
-              </div>
-              
-              <Button href={product.link} variant={product.featured ? 'yellow' : 'primary'} className="w-full py-5 text-sm">
-                Comprar Agora
-              </Button>
-              
-              <div className="mt-4 flex items-center justify-center gap-2 text-br-blue/40 text-[10px] font-bold uppercase tracking-widest">
-                <ShieldCheck size={14} className="text-br-green" /> Checkout Seguro
-              </div>
-            </motion.div>
+          {Object.entries((ASSETS as any).PRODUCTS).map(([key, product]: [string, any], i) => (
+            <ProductCard
+              key={key}
+              productKey={key}
+              product={product}
+              index={i}
+            />
           ))}
         </div>
 
