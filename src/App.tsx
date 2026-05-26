@@ -1,8 +1,3 @@
-/**
- * @license
- * SPDX-License-Identifier: Apache-2.0
- */
-
 import { motion } from 'motion/react';
 import { 
   CheckCircle2, 
@@ -12,20 +7,262 @@ import {
   TrendingUp, 
   Clock, 
   ShieldCheck, 
-  Smartphone, 
   Instagram,
   UserCheck,
   ChevronRight,
-  Menu,
   X,
   Play
 } from 'lucide-react';
 import React, { useState, useEffect } from 'react';
 import useEmblaCarousel from 'embla-carousel-react';
-import { cn, ASSETS, getDriveImageUrl, getDriveViewerUrl, siteConfig } from './lib/utils';
-import { yampiLinks } from './data/yampi-links';
+import { clsx, type ClassValue } from 'clsx';
+import { twMerge } from 'tailwind-merge';
 
-// --- Icons Helper ---
+// --- Local Utilities ---
+export function cn(...inputs: ClassValue[]) {
+  return twMerge(clsx(inputs));
+}
+
+export const getDriveImageUrl = (id: string) => `https://lh3.googleusercontent.com/d/${id}`;
+export const getDriveViewerUrl = (id: string) => `https://drive.google.com/file/d/${id}/preview`;
+
+// --- Inline Site Configuration & Catalog Data ---
+const siteConfig = {
+  brand: {
+    name: "DUO HEAD",
+    edition: "Brasil Edition",
+    year: "2026"
+  },
+  links: {
+    instagram: "https://www.instagram.com/duohead_/",
+    whatsapp: "https://wa.me/5511995250701"
+  },
+  assets: {
+    videos: {
+      hero: "15RzKa3smvsyk_co7LxID7SuRARuzDDl0",
+      sec1: "16QKWib1xI0R0_SmUiYcQG2GFjxTtbmrR",
+      sec2: "1cs7tdebI9kbUuvOUefhZI5-yMmzvtLEu"
+    },
+    images: {
+      gallery: [
+        "13BwSrdnX1SCiTiwGoQsA3oTwvX7RJpPt",
+        "11ylUirsBP0SV8b68VgoCDB5b5q7nP3YH",
+        "18q2Wt2YwqBigh_xf5jdkBDDReXu1Q0YC",
+        "1pfuBic_7Tz3xebc76veVxW7fuaKvJnDf"
+      ],
+      product: "1nIHfTSThCKhqD1SZPrnRxNJX2d2e-X2a",
+      benefits: [
+        "1I1NKanAVYzPJ18-QlHms0r1WMde5AJql",
+        "1xUiky54rlBjAk_NK6C9xAZm5LmoL7Sbv"
+      ],
+      differentials: "1D4_66cs0015_3g-jATZMHabVVtECYJS-",
+      social_proof: "11OXKSx3Rfa8fKv58JQcAdC267chsiSRB",
+      variations: [
+        { "name": "Brasil: Verde e Amarelo", "id": "17E0SmZkUUDcVXXdsLAcYjOCNyhalfsvS" },
+        { "name": "Brasil: Verde e Azul", "id": "10UphD9Vx7Y_LX8n2_8JR08CsvKJc1kLL" },
+        { "name": "Brasil: Azul e Amarelo", "id": "1MQCbj4SrFi_rDhGtrUdpEsN3SWzmLirS" },
+        { "name": "Azul Claro", "id": "15ryUw3pIEII3Jyxv1BqAQeE8bvXGTPoB" },
+        { "name": "Azul Royal", "id": "1rkM1OLeWvDiqIMj4WvuGo3P_vaWUAjb_" },
+        { "name": "Laranja", "id": "1Uwu5yqCIS6QEa8MbLIOvWn58VjUfFfGI" },
+        { "name": "Preto", "id": "1wAUK00YYkwmdwv2BCW-6hxdreE4zGFsS" },
+        { "name": "Rosa", "id": "1fxM22o9RyHa8EFwN2OoanKoHVkG3pZcj" },
+        { "name": "Verde Claro", "id": "1HKKxh3HOfcbtMmL3r0dyEDehBj56r1g1" },
+        { "name": "Verde Escuro", "id": "1XZsZBe4uRydfk1SE_XfnXWg2azxC_0cP" },
+        { "name": "Verde Limão", "id": "1eoB2i4sFE6LXLMRgyvvIy55RJQVmRtJL" },
+        { "name": "Verde Militar", "id": "1IjaxJAzEEsLtFmDIJGpEjiPRf4g5kGPh" }
+      ]
+    }
+  },
+  hero: {
+    promoBadge: "Orgulho Nacional",
+    titleLine1: "O Suporte",
+    titleLine2: "Mais Vendido",
+    titleLine3: "Do Brasil",
+    description: "Autonomia total para raspar a cabeça com perfeição. O Duo Head é a inovação que o brasileiro precisava.",
+    ctaText: "Aproveitar Oferta"
+  },
+  problem_solution: {
+    problemTitle: "Chega de sofrer sozinho",
+    problemSubtitle: "Por que continuar dependendo dos outros?",
+    problems: [
+      "Dificuldade total na parte de trás",
+      "Gasto excessivo com barbeiros",
+      "Cortes mal acabados e falhos",
+      "Falta de tempo para ir ao salão",
+      "Dependência de ajuda para o básico"
+    ],
+    solutionTitle: "Duo Head Brasil",
+    solutionSubtitle: "Sua liberdade começa aqui"
+  },
+  benefits: {
+    sectionTitle: "O que o Brasil já sabe:",
+    items: [
+      { "title": "Independência", "icon": "ShieldCheck", "desc": "Seja o seu próprio barbeiro com precisão absoluta." },
+      { "title": "Mais Reais no Bolso", "icon": "TrendingUp", "desc": "Economia garantida todos os meses." },
+      { "title": "Alcança Tudo", "icon": "CheckCircle2", "desc": "Guia inteligente que atinge cada ângulo." },
+      { "title": "Pronto em Minutos", "icon": "Clock", "desc": "Agilidade total para o homem moderno." },
+      { "title": "Corte Profissional", "icon": "UserCheck", "desc": "Acabamento de luxo sem sair de casa." },
+      { "title": "Made in Brasil", "icon": "Package", "desc": "Orgulho e qualidade nacional reconhecida." }
+    ]
+  },
+  differentials: {
+    sectionTitle: "O que nos torna Incomparáveis?",
+    items: [
+      { "label": "Tecnologia", "value": "Impressão 3D de Nível Industrial" },
+      { "label": "Logística", "value": "Estoque no ABC e Envio Expresso" },
+      { "label": "Suporte", "value": "Atendimento VIP 100% Brasileiro" },
+      { "label": "Confiança", "value": "Garantia de Satisfação Duo Head" },
+      { "label": "Versatilidade", "value": "Compatível com as Melhores Lâminas" }
+    ]
+  },
+  social_proof: {
+    sectionTitle: "Quem usa, recomenda!",
+    quote: "Simplesmente foda. Antes eu ficava dependendo da minha esposa toda semana, agora faço em 5 minutos enquanto tomo banho. A qualidade é absurda!",
+    author: "Ricardo Santos",
+    authorTitle: "Empresário • São Bernardo, SP",
+    ctaText: "Ver comunidade no Instagram"
+  },
+  products: {
+    SUPPORT_WITH_FUSION5: {
+      name: "Kit Suporte + Lâmina Fusion5",
+      description: "Suporte premium + Refil de lâmina Fusion5 incluso.",
+      priceOld: "114,90",
+      priceNew: "80,43",
+      link: "https://duo-head-suporte-duplo-para-laminas.pay.yampi.com.br/r/8QOPT2L6CY",
+      featured: true
+    },
+    SUPPORT_ONLY_FUSION5: {
+      name: "Suporte Fusion5 (Sem lâmina)",
+      description: "Apenas o suporte para quem já possui a lâmina Fusion5.",
+      priceOld: "64,90",
+      priceNew: "45,43",
+      link: "https://duo-head-suporte-duplo-para-laminas.pay.yampi.com.br/r/BD8U7ND8AO"
+    },
+    SUPPORT_WITH_MACH3: {
+      name: "Kit Suporte + Lâmina Mach3",
+      description: "Suporte premium + Refil de lâmina Mach3 incluso.",
+      priceOld: "99,90",
+      priceNew: "69,93",
+      link: "https://duo-head-suporte-duplo-para-laminas.pay.yampi.com.br/r/BD8U7ND8AO",
+      featured: true
+    },
+    SUPPORT_ONLY_MACH3: {
+      name: "Suporte Mach3 (Sem lâmina)",
+      description: "Apenas o suporte para quem já possui a lâmina Mach3.",
+      priceOld: "64,90",
+      priceNew: "45,43",
+      link: "https://duo-head-suporte-duplo-para-laminas.pay.yampi.com.br/r/BD8U7ND8AO"
+    }
+  },
+  visuals_section: {
+    title: "Veja o Duo Head em ação",
+    description: "Assista como é simples e rápido ter o resultado que você sempre quis.",
+    ctaText: "Quero este resultado agora"
+  },
+  delivery_section: [
+    {
+      icon: "Package",
+      title: "Envio Ninja",
+      desc: "Postagem em até 24h. Receba rápido em qualquer lugar."
+    },
+    {
+      icon: "MapPin",
+      title: "Retirada VIP",
+      desc: "Mora no ABC Paulista? Retire em mãos e economize o frete."
+    },
+    {
+      icon: "ShieldCheck",
+      title: "Garantia Real",
+      desc: "Qualidade atestada. Sua satisfação ou seu dinheiro de volta."
+    }
+  ],
+  footer: {
+    copyright: "© 2026 Duo Head Brasil. Todos os direitos reservados. Design e Inovação 100% Brasileira.",
+    subtext: "Enviamos para todo o território nacional com carinho e rapidez."
+  }
+};
+
+const yampiLinks: Record<string, Record<string, string>> = {
+  "SUPPORT_WITH_FUSION5": {
+    "Brasil: Verde e Amarelo": "https://duo-head-suporte-duplo-para-laminas.pay.yampi.com.br/r/8QOPT2L6CY",
+    "Brasil: Azul e Amarelo": "https://duo-head-suporte-duplo-para-laminas.pay.yampi.com.br/r/AIP8JOZ3L6",
+    "Brasil: Verde e Azul": "https://duo-head-suporte-duplo-para-laminas.pay.yampi.com.br/r/77VDVXJ5YG",
+    "Preto": "https://duo-head-suporte-duplo-para-laminas.pay.yampi.com.br/r/634FSL92FS",
+    "Azul Claro": "https://duo-head-suporte-duplo-para-laminas.pay.yampi.com.br/r/2X96XZSJG9",
+    "Azul Royal": "https://duo-head-suporte-duplo-para-laminas.pay.yampi.com.br/r/A7FB951UKP",
+    "Laranja": "https://duo-head-suporte-duplo-para-laminas.pay.yampi.com.br/r/G9PA48B23F",
+    "Verde Claro": "https://duo-head-suporte-duplo-para-laminas.pay.yampi.com.br/r/R0F6HW8M4T",
+    "Verde Escuro": "https://duo-head-suporte-duplo-para-laminas.pay.yampi.com.br/r/QQ7CZLXN30",
+    "Verde Limão": "https://duo-head-suporte-duplo-para-laminas.pay.yampi.com.br/r/CBW5ATFUST",
+    "Verde Militar": "https://duo-head-suporte-duplo-para-laminas.pay.yampi.com.br/r/CSEZBVU9ZA",
+    "Rosa": "https://duo-head-suporte-duplo-para-laminas.pay.yampi.com.br/r/KLA91RDIZQ"
+  },
+  "SUPPORT_ONLY_FUSION5": {
+    "Brasil: Verde e Amarelo": "https://duo-head-suporte-duplo-para-laminas.pay.yampi.com.br/r/5UCG7CKSZM",
+    "Brasil: Azul e Amarelo": "https://duo-head-suporte-duplo-para-laminas.pay.yampi.com.br/r/381FJ47986",
+    "Brasil: Verde e Azul": "https://duo-head-suporte-duplo-para-laminas.pay.yampi.com.br/r/CIERIERCTE",
+    "Preto": "https://duo-head-suporte-duplo-para-laminas.pay.yampi.com.br/r/S36EKO449R",
+    "Azul Claro": "https://duo-head-suporte-duplo-para-laminas.pay.yampi.com.br/r/K49OP9294K",
+    "Azul Royal": "https://duo-head-suporte-duplo-para-laminas.pay.yampi.com.br/r/NQVPYDON5A",
+    "Laranja": "https://duo-head-suporte-duplo-para-laminas.pay.yampi.com.br/r/28QKGZFHV2",
+    "Verde Claro": "https://duo-head-suporte-duplo-para-laminas.pay.yampi.com.br/r/CBF8UK0JM9",
+    "Verde Escuro": "https://duo-head-suporte-duplo-para-laminas.pay.yampi.com.br/r/OEIYYUBH83",
+    "Verde Limão": "https://duo-head-suporte-duplo-para-laminas.pay.yampi.com.br/r/1HL9JCFHAP",
+    "Verde Militar": "https://duo-head-suporte-duplo-para-laminas.pay.yampi.com.br/r/18LCKH4UDB",
+    "Rosa": "https://duo-head-suporte-duplo-para-laminas.pay.yampi.com.br/r/2HVPT1Y74D"
+  },
+  "SUPPORT_WITH_MACH3": {
+    "Brasil: Verde e Amarelo": "https://duo-head-suporte-duplo-para-laminas.pay.yampi.com.br/r/GL8137LRFW",
+    "Brasil: Azul e Amarelo": "https://duo-head-suporte-duplo-para-laminas.pay.yampi.com.br/r/70FDQ3ENO8",
+    "Brasil: Verde e Azul": "https://duo-head-suporte-duplo-para-laminas.pay.yampi.com.br/r/RI0A73N9E1",
+    "Preto": "https://duo-head-suporte-duplo-para-laminas.pay.yampi.com.br/r/4AE4YDXC9K",
+    "Azul Claro": "https://duo-head-suporte-duplo-para-laminas.pay.yampi.com.br/r/NJ08T0DY51",
+    "Azul Royal": "https://duo-head-suporte-duplo-para-laminas.pay.yampi.com.br/r/AOY2HNSZQ0",
+    "Laranja": "https://duo-head-suporte-duplo-para-laminas.pay.yampi.com.br/r/K5N63L5W3X",
+    "Verde Claro": "https://duo-head-suporte-duplo-para-laminas.pay.yampi.com.br/r/SLMUIM8O2M",
+    "Verde Escuro": "https://duo-head-suporte-duplo-para-laminas.pay.yampi.com.br/r/6O5ZMWNCUF",
+    "Verde Limão": "https://duo-head-suporte-duplo-para-laminas.pay.yampi.com.br/r/H3PIWW3YUN",
+    "Verde Militar": "https://duo-head-suporte-duplo-para-laminas.pay.yampi.com.br/r/4IBU3TE96O",
+    "Rosa": "https://duo-head-suporte-duplo-para-laminas.pay.yampi.com.br/r/SHGZGWCP5H"
+  },
+  "SUPPORT_ONLY_MACH3": {
+    "Brasil: Verde e Amarelo": "https://duo-head-suporte-duplo-para-laminas.pay.yampi.com.br/r/BD8U7ND8AO",
+    "Brasil: Azul e Amarelo": "https://duo-head-suporte-duplo-para-laminas.pay.yampi.com.br/r/6SJ2K7BF4N",
+    "Brasil: Verde e Azul": "https://duo-head-suporte-duplo-para-laminas.pay.yampi.com.br/r/6YAEGE6PJU",
+    "Preto": "https://duo-head-suporte-duplo-para-laminas.pay.yampi.com.br/r/O7VFXXKI7R",
+    "Azul Claro": "https://duo-head-suporte-duplo-para-laminas.pay.yampi.com.br/r/K7A3SI40BA",
+    "Azul Royal": "https://duo-head-suporte-duplo-para-laminas.pay.yampi.com.br/r/8FIQ0UUXNH",
+    "Laranja": "https://duo-head-suporte-duplo-para-laminas.pay.yampi.com.br/r/1EOGUAACN3",
+    "Verde Claro": "https://duo-head-suporte-duplo-para-laminas.pay.yampi.com.br/r/NTQJKTW4YX",
+    "Verde Escuro": "https://duo-head-suporte-duplo-para-laminas.pay.yampi.com.br/r/LGUGQNHBYZ",
+    "Verde Limão": "https://duo-head-suporte-duplo-para-laminas.pay.yampi.com.br/r/56S3CH22KF",
+    "Verde Militar": "https://duo-head-suporte-duplo-para-laminas.pay.yampi.com.br/r/CTX41KT5BD",
+    "Rosa": "https://duo-head-suporte-duplo-para-laminas.pay.yampi.com.br/r/58FRVRN7GY"
+  }
+};
+
+const ASSETS = {
+  VIDEOS: {
+    HERO: siteConfig.assets.videos.hero,
+    SEC1: siteConfig.assets.videos.sec1,
+    SEC2: siteConfig.assets.videos.sec2,
+  },
+  IMAGES: {
+    GALLERY: siteConfig.assets.images.gallery,
+    PRODUCT: siteConfig.assets.images.product,
+    BENEFITS: siteConfig.assets.images.benefits,
+    DIFFERENTIALS: siteConfig.assets.images.differentials,
+    SOCIAL_PROOF: siteConfig.assets.images.social_proof,
+    VARIATIONS: siteConfig.assets.images.variations,
+  },
+  LINKS: {
+    INSTAGRAM: siteConfig.links.instagram,
+    WHATSAPP: siteConfig.links.whatsapp,
+  },
+  PRODUCTS: siteConfig.products
+};
+
+// --- Custom Icons Helper ---
 const getIcon = (iconName: string, size = 36) => {
   switch (iconName) {
     case 'ShieldCheck': return <ShieldCheck size={size} />;
@@ -39,8 +276,7 @@ const getIcon = (iconName: string, size = 36) => {
   }
 };
 
-// --- Components ---
-
+// --- Secondary Custom Components ---
 const VideoPlayer = ({ srcId, title, className }: { srcId: string; title: string, className?: string }) => {
   const [isVisible, setIsVisible] = React.useState(false);
   const containerRef = React.useRef<HTMLDivElement>(null);
@@ -68,7 +304,6 @@ const VideoPlayer = ({ srcId, title, className }: { srcId: string; title: string
         className
       )}
     >
-      {/* Interaction Shield: Prevents accidental navigation while keeping basic controls accessible if needed */}
       <div className="absolute inset-0 z-10 bg-transparent pointer-events-none" />
       
       {isVisible ? (
@@ -171,7 +406,7 @@ const VariationCarousel = () => {
                       : "bg-gray-50 border-gray-100"
                   )}
                 >
-                  <div className="aspect-square relative overflow-hidden">
+                  <div className="aspect-square relative overflow-hidden bg-gray-50">
                     <img 
                       src={getDriveImageUrl(variant.id)} 
                       alt={variant.name} 
@@ -180,11 +415,11 @@ const VariationCarousel = () => {
                       loading="lazy"
                     />
                     {isBrasil ? (
-                      <div className="absolute top-4 left-4 bg-br-yellow text-br-blue px-4 py-2 rounded-full text-xs font-black shadow-lg flex items-center gap-1">
+                      <div className="absolute top-4 left-4 bg-br-yellow text-br-blue px-4 py-2 rounded-full text-xs font-black shadow-lg flex items-center gap-1 z-10">
                         <span className="text-sm">🇧🇷</span> EDIÇÃO ESPECIAL
                       </div>
                     ) : (
-                      <div className="absolute top-4 right-4 bg-white px-3 py-1 rounded-full text-xs font-bold shadow-sm text-gray-800">
+                      <div className="absolute top-4 right-4 bg-white px-3 py-1 rounded-full text-xs font-bold shadow-sm text-gray-800 z-10">
                         Disponível
                       </div>
                     )}
@@ -212,21 +447,21 @@ const VariationCarousel = () => {
         </div>
       </div>
       
-      {/* Navigation Buttons */}
       <button 
         onClick={scrollPrev}
-        className="absolute left-0 top-1/2 -translate-y-1/2 -translate-x-1/2 bg-white p-3 rounded-full shadow-xl z-20 hidden md:block hover:bg-gray-50 transition-colors border border-gray-100"
+        className="absolute left-0 top-1/2 -translate-y-1/2 -translate-x-1/2 bg-white p-3 rounded-full shadow-xl z-20 hidden md:block hover:bg-gray-50 transition-colors border border-gray-100 cursor-pointer"
+        aria-label="Anterior"
       >
         <ChevronRight className="rotate-180" size={24} />
       </button>
       <button 
         onClick={scrollNext}
-        className="absolute right-0 top-1/2 -translate-y-1/2 translate-x-1/2 bg-white p-3 rounded-full shadow-xl z-20 hidden md:block hover:bg-gray-50 transition-colors border border-gray-100"
+        className="absolute right-0 top-1/2 -translate-y-1/2 translate-x-1/2 bg-white p-3 rounded-full shadow-xl z-20 hidden md:block hover:bg-gray-50 transition-colors border border-gray-100 cursor-pointer"
+        aria-label="Próximo"
       >
         <ChevronRight size={24} />
       </button>
 
-      {/* Progress Dots / Visual Indicator */}
       <div className="flex justify-center gap-2 mt-2 md:hidden">
         {ASSETS.IMAGES.VARIATIONS.map((_, i) => (
           <div 
@@ -255,7 +490,7 @@ const Button = ({
   onClick?: () => void;
   href?: string;
 }) => {
-  const baseStyles = "px-8 py-5 rounded-2xl font-black transition-all flex items-center justify-center gap-2 active:scale-95 text-lg shadow-xl uppercase tracking-tight";
+  const baseStyles = "px-8 py-5 rounded-2xl font-black transition-all flex items-center justify-center gap-2 active:scale-95 text-lg shadow-xl uppercase tracking-tight cursor-pointer";
   const variants = {
     primary: "bg-br-green text-white hover:bg-br-green-dark shadow-br-green/20",
     yellow: "bg-br-yellow text-br-blue hover:bg-[#ebcd00] shadow-br-yellow/20",
@@ -390,7 +625,6 @@ const ProductCard = ({
         </div>
 
         <div>
-          {/* Seleção de cores - Destaque Copa do Mundo */}
           <div className="mb-6">
             <p className="text-xs font-black uppercase text-br-green tracking-wider mb-3 flex items-center gap-1">
               <span>🇧🇷</span> EDIÇÃO COPA DO MUNDO:
@@ -453,7 +687,6 @@ const ProductCard = ({
         </div>
       </div>
       
-      {/* Botão de Compra com link dinâmico da Yampi */}
       <Button 
         href={purchaseUrl} 
         variant={product.featured ? 'yellow' : 'primary'} 
@@ -462,7 +695,6 @@ const ProductCard = ({
         Comprar Agora
       </Button>
       
-      {/* Selecionado status */}
       <div className="mt-3 text-center text-[10px] font-black uppercase tracking-widest text-br-green/80 flex items-center justify-center gap-1">
         <span className="h-1.5 w-1.5 rounded-full bg-br-green" />
         Tom: {selectedColor.replace('Brasil: ', '')}
@@ -476,7 +708,6 @@ const ProductCard = ({
 };
 
 // --- Main Application ---
-
 export default function App() {
   const [isScrolled, setIsScrolled] = useState(false);
   const [inIframe, setInIframe] = useState(false);
@@ -491,7 +722,6 @@ export default function App() {
     }
   }, []);
 
-  // Ensure absolute visibility, alignment, and interactive behavior, releasing any potential third-party locks or wraps
   useEffect(() => {
     if (typeof document !== 'undefined') {
       try {
@@ -511,7 +741,7 @@ export default function App() {
           rootEl.style.filter = 'none';
         }
       } catch (e) {
-        // Fallback safety block
+        // Safe block fallback
       }
     }
   }, []);
@@ -552,7 +782,6 @@ export default function App() {
 
       {/* 1. HERO */}
       <section className="pt-56 pb-24 px-6 relative overflow-hidden">
-        {/* Brazilian Flag Inspired Background Elements (disabled in iframe to prevent overlay and rendering page bugs) */}
         {!inIframe && (
           <>
             <div className="absolute top-0 right-0 -translate-y-1/2 translate-x-1/4 w-[600px] h-[600px] bg-br-green/5 rounded-full blur-[100px] pointer-events-none" />
@@ -702,7 +931,7 @@ export default function App() {
             <img 
               src={getDriveImageUrl(ASSETS.IMAGES.DIFFERENTIALS)} 
               alt="Diferenciais" 
-              className="w-full h-auto"
+              className="w-full h-auto bg-gray-50"
               referrerPolicy="no-referrer"
             />
           </motion.div>
@@ -745,7 +974,7 @@ export default function App() {
               <Instagram size={24} /> {siteConfig.social_proof.ctaText}
             </Button>
           </div>
-          <div className="rounded-[3rem] overflow-hidden shadow-2xl border-4 border-br-green/30 transform rotate-1">
+          <div className="rounded-[3rem] overflow-hidden shadow-2xl border-4 border-br-green/30 transform rotate-1 bg-gray-50">
             <img 
               src={getDriveImageUrl(ASSETS.IMAGES.SOCIAL_PROOF)} 
               alt="Prova social" 
@@ -837,6 +1066,7 @@ export default function App() {
           ))}
         </div>
       </Section>
+
       {/* Footer */}
       <footer className="py-20 px-6 bg-br-blue text-white text-center pb-32">
         <div className="flex flex-col items-center justify-center gap-4 mb-10">
@@ -852,12 +1082,12 @@ export default function App() {
           <p>{siteConfig.footer.copyright} <br />{siteConfig.footer.subtext}</p>
         </div>
         <div className="flex justify-center gap-8">
-          <a href={ASSETS.LINKS.INSTAGRAM} target="_blank" rel="noopener noreferrer" className="p-3 bg-white/5 rounded-full hover:bg-white/10 text-white transition-all hover:scale-110"><Instagram /></a>
-          <a href={ASSETS.LINKS.WHATSAPP} target="_blank" rel="noopener noreferrer" className="p-3 bg-white/5 rounded-full hover:bg-green-500/20 text-white hover:text-[#25D366] transition-all hover:scale-110"><MessageCircle /></a>
+          <a href={ASSETS.LINKS.INSTAGRAM} target="_blank" rel="noopener noreferrer" className="p-3 bg-white/5 rounded-full hover:bg-white/10 text-white transition-all hover:scale-110" aria-label="Instagram"><Instagram /></a>
+          <a href={ASSETS.LINKS.WHATSAPP} target="_blank" rel="noopener noreferrer" className="p-3 bg-white/5 rounded-full hover:bg-green-500/20 text-white hover:text-[#25D366] transition-all hover:scale-110" aria-label="WhatsApp"><MessageCircle /></a>
         </div>
       </footer>
 
-      {/* 13. STICKY MOBILE CTA */}
+      {/* Sticky Mobile CTA */}
       <div className="fixed bottom-6 left-6 right-6 md:hidden z-50 flex gap-2">
         <Button href={ASSETS.LINKS.WHATSAPP} variant="whatsapp" className="w-16 h-16 p-0 rounded-2xl flex-shrink-0 flex items-center justify-center shadow-2xl">
           <MessageCircle size={32} strokeWidth={2.5} />
@@ -871,7 +1101,7 @@ export default function App() {
   );
 }
 
-// Missing component for delivery section
+// Missing inline component for delivery section map pin
 const MapPin = ({ size, className, strokeWidth = 2.5 }: { size: number, className: string, strokeWidth?: number }) => (
   <svg 
     xmlns="http://www.w3.org/2000/svg" 
