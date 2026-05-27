@@ -279,6 +279,7 @@ const getIcon = (iconName: string, size = 36) => {
 // --- Secondary Custom Components ---
 const VideoPlayer = ({ srcId, title, className }: { srcId: string; title: string, className?: string }) => {
   const [isVisible, setIsVisible] = React.useState(false);
+  const [isHovered, setIsHovered] = React.useState(false);
   const containerRef = React.useRef<HTMLDivElement>(null);
 
   React.useEffect(() => {
@@ -299,27 +300,54 @@ const VideoPlayer = ({ srcId, title, className }: { srcId: string; title: string
   return (
     <div 
       ref={containerRef}
+      onMouseEnter={() => setIsHovered(true)}
+      onMouseLeave={() => setIsHovered(false)}
+      onClick={() => setIsHovered(!isHovered)}
       className={cn(
-        "w-full max-w-[320px] mx-auto aspect-[9/16] rounded-[2rem] overflow-hidden shadow-2xl bg-black border-4 border-white/20 relative",
+        "w-full max-w-[320px] mx-auto aspect-[9/16] rounded-[2rem] overflow-hidden shadow-2xl bg-black border-4 border-white/20 relative cursor-pointer select-none transition-all duration-300",
+        isHovered ? "border-br-green/50 scale-[1.01] shadow-[0_20px_40px_rgba(0,155,58,0.2)]" : "hover:border-white/40",
         className
       )}
     >
       <div className="absolute inset-0 z-10 bg-transparent pointer-events-none" />
       
-      {isVisible ? (
-        <div className="absolute inset-0 overflow-hidden">
+      {isVisible && isHovered ? (
+        <div className="absolute inset-0 overflow-hidden bg-black">
           <iframe 
             src={`https://drive.google.com/file/d/${srcId}/preview?autoplay=1&mute=1`} 
-            className="absolute top-1/2 left-1/2 w-[500%] h-[500%] -translate-x-1/2 -translate-y-1/2 border-none scale-[0.2] origin-center"
+            className="absolute top-1/2 left-1/2 w-[500%] h-[500%] -translate-x-1/2 -translate-y-1/2 border-none scale-[0.2] origin-center pointer-events-none"
             title={title}
             allow="autoplay; encrypted-media"
             referrerPolicy="no-referrer"
           />
         </div>
       ) : (
-        <div className="w-full h-full flex items-center justify-center bg-gray-900 group cursor-pointer">
-          <div className="bg-white/20 p-6 rounded-full animate-pulse">
-            <Play className="text-white/20 fill-white" size={40} />
+        <div className="w-full h-full flex flex-col items-center justify-between bg-gradient-to-b from-[#111] via-[#0b1c5c]/30 to-[#009b3a]/20 p-6 text-center select-none">
+          {/* Top watermark */}
+          <div className="text-[10px] font-black tracking-[0.25em] text-white/40 uppercase block pt-4">
+            Duo Head • Brasil Edition
+          </div>
+
+          {/* Centered glowing play button */}
+          <div className="relative flex flex-col items-center justify-center gap-4 py-8">
+            <div className="relative">
+              {/* Outer pulsing ring */}
+              <div className="absolute -inset-4 rounded-full bg-gradient-to-r from-br-green to-br-yellow opacity-40 blur-md animate-pulse" />
+              
+              <div className="relative bg-white/10 border border-white/20 p-6 rounded-full hover:bg-white/20 hover:scale-110 active:scale-95 transition-all shadow-xl">
+                <Play className="text-br-yellow fill-br-yellow translate-x-0.5" size={32} strokeWidth={2.5} />
+              </div>
+            </div>
+            
+            <div className="text-sm font-black text-white uppercase tracking-wider animate-pulse pt-2">
+              VER DEMONSTRAÇÃO
+            </div>
+          </div>
+
+          {/* Bottom user tip */}
+          <div className="text-[11px] font-bold text-white/50 tracking-wide pb-4">
+            <span className="hidden md:inline">⚡ Passe o mouse para testar</span>
+            <span className="md:hidden">⚡ Toque para assistir</span>
           </div>
         </div>
       )}
@@ -574,6 +602,10 @@ const ProductCard = ({
   // Get current purchase url from loaded yampiLinks
   const purchaseUrl = (yampiLinks as any)[productKey]?.[selectedColor] || product.link;
 
+  const oldVal = parseFloat(product.priceOld.replace(',', '.'));
+  const newVal = parseFloat(product.priceNew.replace(',', '.'));
+  const discountPercent = Math.round(((oldVal - newVal) / oldVal) * 100);
+
   const copaColors = [
     { name: "Brasil: Verde e Amarelo", style: "bg-gradient-to-r from-[#009b3a] to-[#fedf00]" },
     { name: "Brasil: Verde e Azul", style: "bg-gradient-to-r from-[#009b3a] to-[#002776]" },
@@ -614,12 +646,21 @@ const ProductCard = ({
           <h3 className="text-2xl font-black text-br-blue leading-[1.1] mb-2 uppercase italic">{product.name}</h3>
           <p className="text-br-blue/60 text-sm mb-6 font-medium leading-tight">{product.description}</p>
           
-          <div className="mb-6 bg-gray-50/50 p-4 rounded-2xl border border-gray-100/60">
+          <div className="mb-6 bg-br-green/[0.04] p-4 rounded-2xl border-2 border-br-green/20 relative overflow-hidden">
+            {/* Dynamic Discount Badge */}
+            <div className="absolute top-4 right-4 bg-red-600 text-white font-black text-[10px] px-2.5 py-1 rounded-md uppercase tracking-wider shadow-sm">
+              {discountPercent}% OFF
+            </div>
+
             <span className="text-gray-400 text-xs font-bold line-through block">De R$ {product.priceOld}</span>
             <div className="flex items-baseline gap-1 mt-1">
               <span className="text-br-blue font-black text-sm">R$</span>
               <span className="text-4xl md:text-5xl font-black text-br-green tracking-tighter leading-none">{product.priceNew.split(',')[0]}</span>
               <span className="text-xl md:text-2xl font-black text-br-green tracking-tighter">,{product.priceNew.split(',')[1]}</span>
+            </div>
+            
+            <div className="mt-2 text-[10px] font-black text-br-green uppercase tracking-wider flex items-center gap-1">
+              ⚡ Economize R$ {(oldVal - newVal).toFixed(2).replace('.', ',')} agora!
             </div>
           </div>
         </div>
@@ -713,17 +754,6 @@ export default function App() {
   const [inIframe, setInIframe] = useState(false);
   const [showPopup, setShowPopup] = useState(false);
   const [copied, setCopied] = useState(false);
-
-  useEffect(() => {
-    // 3 seconds delay before showing the popup
-    const isClosed = localStorage.getItem('duohead_promo_closed');
-    if (!isClosed) {
-      const timer = setTimeout(() => {
-        setShowPopup(true);
-      }, 3000);
-      return () => clearTimeout(timer);
-    }
-  }, []);
 
   useEffect(() => {
     // Exit intent detection
