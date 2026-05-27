@@ -278,28 +278,10 @@ const getIcon = (iconName: string, size = 36) => {
 
 // --- Secondary Custom Components ---
 const VideoPlayer = ({ srcId, title, className }: { srcId: string; title: string, className?: string }) => {
-  const [isVisible, setIsVisible] = React.useState(false);
   const [isPlaying, setIsPlaying] = React.useState(false);
-  const containerRef = React.useRef<HTMLDivElement>(null);
-
-  React.useEffect(() => {
-    const observer = new IntersectionObserver(
-      ([entry]) => {
-        if (entry.isIntersecting) {
-          setIsVisible(true);
-        }
-      },
-      { threshold: 0.1 }
-    );
-
-    const currentRef = containerRef.current;
-    if (currentRef) observer.observe(currentRef);
-    return () => { if (currentRef) observer.unobserve(currentRef); };
-  }, []);
 
   return (
     <div 
-      ref={containerRef}
       className={cn(
         "w-full max-w-[320px] mx-auto aspect-[9/16] rounded-[2rem] overflow-hidden shadow-2xl bg-[#0b132b] border-4 border-white/20 relative group",
         className
@@ -320,7 +302,7 @@ const VideoPlayer = ({ srcId, title, className }: { srcId: string; title: string
       )}
 
       {/* Main Container */}
-      {isPlaying && isVisible ? (
+      {isPlaying ? (
         <div className="absolute inset-0 overflow-hidden bg-black">
           <iframe 
             src={`https://drive.google.com/file/d/${srcId}/preview?autoplay=1`} 
