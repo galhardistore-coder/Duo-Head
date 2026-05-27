@@ -302,7 +302,7 @@ const VideoPlayer = ({ srcId, title, className }: { srcId: string; title: string
       ref={containerRef}
       onMouseEnter={() => setIsHovered(true)}
       onMouseLeave={() => setIsHovered(false)}
-      onClick={() => setIsHovered(!isHovered)}
+      onClick={() => setIsHovered(true)}
       className={cn(
         "w-full max-w-[320px] mx-auto aspect-[9/16] rounded-[2rem] overflow-hidden shadow-2xl bg-black border-4 border-white/20 relative cursor-pointer select-none transition-all duration-300",
         isHovered ? "border-br-green/50 scale-[1.01] shadow-[0_20px_40px_rgba(0,155,58,0.2)]" : "hover:border-white/40",
