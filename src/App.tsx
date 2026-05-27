@@ -711,6 +711,44 @@ const ProductCard = ({
 export default function App() {
   const [isScrolled, setIsScrolled] = useState(false);
   const [inIframe, setInIframe] = useState(false);
+  const [showPopup, setShowPopup] = useState(false);
+  const [copied, setCopied] = useState(false);
+
+  useEffect(() => {
+    // 3 seconds delay before showing the popup
+    const isClosed = localStorage.getItem('duohead_promo_closed');
+    if (!isClosed) {
+      const timer = setTimeout(() => {
+        setShowPopup(true);
+      }, 3000);
+      return () => clearTimeout(timer);
+    }
+  }, []);
+
+  useEffect(() => {
+    // Exit intent detection
+    const handleMouseLeave = (e: MouseEvent) => {
+      if (e.clientY < 15) {
+        const isClosed = localStorage.getItem('duohead_promo_closed');
+        if (!isClosed) {
+          setShowPopup(true);
+        }
+      }
+    };
+    document.addEventListener('mouseleave', handleMouseLeave);
+    return () => document.removeEventListener('mouseleave', handleMouseLeave);
+  }, []);
+
+  const handleClosePopup = () => {
+    setShowPopup(false);
+    localStorage.setItem('duohead_promo_closed', 'true');
+  };
+
+  const handleCopyCoupon = () => {
+    navigator.clipboard.writeText('PROMO5');
+    setCopied(true);
+    setTimeout(() => setCopied(false), 2000);
+  };
 
   useEffect(() => {
     if (typeof window !== 'undefined') {
@@ -1096,6 +1134,95 @@ export default function App() {
           ESCOLHER MEU KIT <br /><span className="text-[10px] opacity-80">PROMOÇÃO BRASIL</span>
         </Button>
       </div>
+
+      {/* 5% Discount Popup */}
+      {showPopup && (
+        <div className="fixed inset-0 z-[100] flex items-center justify-center p-4 bg-black/60 backdrop-blur-md">
+          <div className="absolute inset-0 cursor-pointer" onClick={handleClosePopup} />
+          <motion.div 
+            initial={{ opacity: 0, scale: 0.9, y: 30 }}
+            animate={{ opacity: 1, scale: 1, y: 0 }}
+            exit={{ opacity: 0, scale: 0.9, y: 30 }}
+            transition={{ type: "spring", damping: 25, stiffness: 350 }}
+            className="bg-white rounded-[2rem] border-4 border-br-green/30 p-6 sm:p-8 max-w-md w-full shadow-[0_30px_60px_rgba(0,0,0,0.4)] relative overflow-hidden text-center z-10"
+          >
+            {/* Background design accents */}
+            <div className="absolute -top-10 -right-10 w-32 h-32 bg-br-yellow/20 rounded-full blur-2xl pointer-events-none" />
+            <div className="absolute -bottom-10 -left-10 w-32 h-32 bg-br-green/15 rounded-full blur-2xl pointer-events-none" />
+
+            {/* Close button */}
+            <button 
+              onClick={handleClosePopup}
+              className="absolute top-5 right-5 p-2 rounded-full hover:bg-gray-100 text-gray-400 hover:text-gray-700 transition-colors cursor-pointer"
+              aria-label="Configurações de fechar"
+            >
+              <X size={20} strokeWidth={3} />
+            </button>
+
+            {/* Promotion Header Details */}
+            <div className="relative z-10">
+              <span className="bg-br-green/10 text-br-green font-black text-xs px-4 py-1.5 rounded-full uppercase tracking-wider inline-block mb-4">
+                🇧🇷 Oferta Exclusiva Brasil
+              </span>
+              <h3 className="text-3xl font-black italic uppercase text-br-blue tracking-tighter leading-none mb-3">
+                GANHE 5% DE DESCONTO!
+              </h3>
+              <p className="text-br-blue/75 font-medium text-sm mb-6 leading-relaxed">
+                Parabéns! Você ganhou um cupom de <strong className="text-br-green font-extrabold">5% de desconto</strong> para garantir o seu Duo Head na sua primeira compra!
+              </p>
+
+              {/* Coupon Box */}
+              <div className="border-2 border-dashed border-br-green/45 rounded-2xl bg-br-green/5 p-4 mb-6 flex flex-col sm:flex-row items-center justify-between gap-4">
+                <div className="text-left">
+                  <span className="text-[10px] font-black text-br-blue/40 uppercase block tracking-wider">CUPOM DE DESCONTO:</span>
+                  <span className="font-mono text-2xl font-black text-br-blue tracking-widest leading-none">PROMO5</span>
+                </div>
+                <button
+                  type="button"
+                  onClick={handleCopyCoupon}
+                  className={cn(
+                    "w-full sm:w-auto px-5 py-3 rounded-xl font-black text-xs uppercase tracking-wider transition-all duration-300 flex items-center justify-center gap-2 cursor-pointer shadow-md",
+                    copied 
+                      ? "bg-br-green text-white" 
+                      : "bg-br-blue hover:bg-br-blue/90 text-white active:scale-95"
+                  )}
+                >
+                  {copied ? (
+                    <>
+                      <CheckCircle2 size={14} strokeWidth={3} />
+                      COPIADO!
+                    </>
+                  ) : (
+                    <>
+                      <ShoppingBag size={14} strokeWidth={3} />
+                      COPIAR CÓDIGO
+                    </>
+                  )}
+                </button>
+              </div>
+
+              {/* CTA and Skip Buttons */}
+              <div className="flex flex-col gap-3">
+                <Button 
+                  href="#precos" 
+                  onClick={handleClosePopup}
+                  variant="yellow"
+                  className="w-full py-4 text-sm font-black shadow-md uppercase tracking-wider"
+                >
+                  APROVEITAR DESCONTO ⚡
+                </Button>
+                
+                <button
+                  onClick={handleClosePopup}
+                  className="text-xs font-bold text-gray-400 hover:text-gray-600 transition-colors underline cursor-pointer mt-1"
+                >
+                  Prefiro pagar o preço normal sem desconto
+                </button>
+              </div>
+            </div>
+          </motion.div>
+        </div>
+      )}
 
     </div>
   );
