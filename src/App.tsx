@@ -279,6 +279,7 @@ const getIcon = (iconName: string, size = 36) => {
 // --- Secondary Custom Components ---
 const VideoPlayer = ({ srcId, title, className }: { srcId: string; title: string, className?: string }) => {
   const [isVisible, setIsVisible] = React.useState(false);
+  const [isPlaying, setIsPlaying] = React.useState(false);
   const containerRef = React.useRef<HTMLDivElement>(null);
 
   React.useEffect(() => {
@@ -300,16 +301,29 @@ const VideoPlayer = ({ srcId, title, className }: { srcId: string; title: string
     <div 
       ref={containerRef}
       className={cn(
-        "w-full max-w-[320px] mx-auto aspect-[9/16] rounded-[2rem] overflow-hidden shadow-2xl bg-black border-4 border-white/20 relative",
+        "w-full max-w-[320px] mx-auto aspect-[9/16] rounded-[2rem] overflow-hidden shadow-2xl bg-[#0b132b] border-4 border-white/20 relative group",
         className
       )}
     >
-      <div className="absolute inset-0 z-10 bg-transparent pointer-events-none" />
-      
-      {isVisible ? (
-        <div className="absolute inset-0 overflow-hidden">
+      {/* If playing, show a small action to stop/reset */}
+      {isPlaying && (
+        <button
+          onClick={(e) => {
+            e.stopPropagation();
+            setIsPlaying(false);
+          }}
+          className="absolute top-4 right-4 z-30 p-2 bg-black/70 hover:bg-black text-white hover:text-br-yellow rounded-full transition-all active:scale-90 flex items-center justify-center cursor-pointer"
+          title="Parar Vídeo"
+        >
+          <X size={16} strokeWidth={3} />
+        </button>
+      )}
+
+      {/* Main Container */}
+      {isPlaying && isVisible ? (
+        <div className="absolute inset-0 overflow-hidden bg-black">
           <iframe 
-            src={`https://drive.google.com/file/d/${srcId}/preview?autoplay=1&mute=1`} 
+            src={`https://drive.google.com/file/d/${srcId}/preview?autoplay=1`} 
             className="absolute top-1/2 left-1/2 w-[500%] h-[500%] -translate-x-1/2 -translate-y-1/2 border-none scale-[0.2] origin-center"
             title={title}
             allow="autoplay; encrypted-media"
@@ -317,10 +331,23 @@ const VideoPlayer = ({ srcId, title, className }: { srcId: string; title: string
           />
         </div>
       ) : (
-        <div className="w-full h-full flex items-center justify-center bg-gray-900 group cursor-pointer">
-          <div className="bg-white/20 p-6 rounded-full animate-pulse">
-            <Play className="text-white/20 fill-white" size={40} />
+        <div 
+          onClick={() => setIsPlaying(true)}
+          className="absolute inset-0 w-full h-full flex flex-col items-center justify-center bg-gradient-to-b from-br-green/30 via-br-blue/90 to-br-blue text-center p-6 cursor-pointer select-none group"
+        >
+          {/* Action icon */}
+          <div className="w-20 h-20 rounded-full bg-br-yellow hover:bg-br-yellow/90 text-br-blue flex items-center justify-center shadow-2xl shadow-br-yellow/30 transition-all duration-300 transform group-hover:scale-110 group-active:scale-95 mb-4 relative">
+            <span className="absolute inset-0 rounded-full bg-br-yellow animate-ping opacity-25" />
+            <Play size={32} className="fill-current text-br-blue ml-1.5" />
           </div>
+          
+          <span className="text-br-yellow text-xs font-black tracking-[0.25em] uppercase mb-1">Duo Head em Ação</span>
+          <h4 className="text-white text-lg font-black italic uppercase leading-tight max-w-[200px]">
+            {title}
+          </h4>
+          <span className="mt-4 text-[10px] text-white/50 font-bold uppercase tracking-widest bg-white/5 px-3 py-1 rounded-full border border-white/10 group-hover:bg-white/10 group-hover:text-white transition-all">
+            Clique para Assistir
+          </span>
         </div>
       )}
     </div>
@@ -581,6 +608,10 @@ const ProductCard = ({
   // Get current purchase url from loaded yampiLinks
   const purchaseUrl = (yampiLinks as any)[productKey]?.[selectedColor] || product.link;
 
+  const oldPriceFloat = parseFloat(product.priceOld.replace(',', '.'));
+  const newPriceFloat = parseFloat(product.priceNew.replace(',', '.'));
+  const discountPercent = Math.round(((oldPriceFloat - newPriceFloat) / oldPriceFloat) * 100);
+
   const copaColors = [
     { name: "Brasil: Verde e Amarelo", style: "bg-gradient-to-r from-[#009b3a] to-[#fedf00]" },
     { name: "Brasil: Verde e Azul", style: "bg-gradient-to-r from-[#009b3a] to-[#002776]" },
@@ -621,12 +652,29 @@ const ProductCard = ({
           <h3 className="text-2xl font-black text-br-blue leading-[1.1] mb-2 uppercase italic">{product.name}</h3>
           <p className="text-br-blue/60 text-sm mb-6 font-medium leading-tight">{product.description}</p>
           
-          <div className="mb-6 bg-gray-50/50 p-4 rounded-2xl border border-gray-100/60">
-            <span className="text-gray-400 text-xs font-bold line-through block">De R$ {product.priceOld}</span>
-            <div className="flex items-baseline gap-1 mt-1">
+          <div className="mb-6 bg-gradient-to-br from-br-green/5 to-br-yellow/5 p-5 rounded-3xl border border-br-green/10 shadow-inner relative overflow-hidden">
+            {/* Visual background sparkle/glow */}
+            <div className="absolute top-0 right-0 w-24 h-24 bg-br-green/10 rounded-full blur-xl pointer-events-none" />
+            
+            <div className="flex items-center justify-between mb-2">
+              <span className="text-gray-400 text-xs font-bold line-through">De R$ {product.priceOld}</span>
+              <span className="bg-red-500 text-white text-[10px] font-black uppercase tracking-widest px-2.5 py-1 rounded-full shadow-md animate-pulse">
+                -{discountPercent}% OFF
+              </span>
+            </div>
+            
+            <div className="flex items-baseline gap-1">
+              <span className="text-br-blue/40 font-bold text-xs uppercase tracking-wider select-none pr-1">Por apenas</span>
               <span className="text-br-blue font-black text-sm">R$</span>
               <span className="text-4xl md:text-5xl font-black text-br-green tracking-tighter leading-none">{product.priceNew.split(',')[0]}</span>
               <span className="text-xl md:text-2xl font-black text-br-green tracking-tighter">,{product.priceNew.split(',')[1]}</span>
+            </div>
+            
+            <div className="mt-3 pt-3 border-t border-dashed border-br-green/15 flex items-center justify-between text-xs">
+              <span className="text-br-green font-black flex items-center gap-1">
+                <TrendingUp size={14} strokeWidth={3} /> Economia de R$ {(oldPriceFloat - newPriceFloat).toFixed(2).replace('.', ',')}
+              </span>
+              <span className="text-br-blue/60 font-semibold uppercase tracking-wider text-[10px]">no PIX / Cartão</span>
             </div>
           </div>
         </div>
@@ -732,17 +780,6 @@ export default function App() {
   const [inIframe, setInIframe] = useState(false);
   const [showPopup, setShowPopup] = useState(false);
   const [copied, setCopied] = useState(false);
-
-  useEffect(() => {
-    // 3 seconds delay before showing the popup
-    const isClosed = localStorage.getItem('duohead_promo_closed');
-    if (!isClosed) {
-      const timer = setTimeout(() => {
-        setShowPopup(true);
-      }, 3000);
-      return () => clearTimeout(timer);
-    }
-  }, []);
 
   useEffect(() => {
     // Exit intent detection
