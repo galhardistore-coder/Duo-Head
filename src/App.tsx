@@ -517,6 +517,13 @@ const Button = ({
               element.scrollIntoView({ behavior: 'smooth' });
             }
           }
+          if (typeof window !== 'undefined' && (window as any).fbq) {
+            if (href.includes('wa.me')) {
+              (window as any).fbq('track', 'Contact', { content_name: 'WhatsApp Contact' });
+            } else if (href.includes('instagram.com')) {
+              (window as any).fbq('track', 'CustomEvent', { content_name: 'Instagram View' });
+            }
+          }
           onClick?.();
         }}
       >
@@ -691,6 +698,18 @@ const ProductCard = ({
         href={purchaseUrl} 
         variant={product.featured ? 'yellow' : 'primary'} 
         className="w-full py-5 text-sm font-black shadow-lg transition-all"
+        onClick={() => {
+          if (typeof window !== 'undefined' && (window as any).fbq) {
+            (window as any).fbq('track', 'InitiateCheckout', {
+              content_name: product.name,
+              content_ids: [productKey],
+              content_type: 'product',
+              value: parseFloat(product.priceNew.replace(',', '.')),
+              currency: 'BRL',
+              predicted_color: selectedColor
+            });
+          }
+        }}
       >
         Comprar Agora
       </Button>
@@ -747,6 +766,12 @@ export default function App() {
   const handleCopyCoupon = () => {
     navigator.clipboard.writeText('PROMO5');
     setCopied(true);
+    if (typeof window !== 'undefined' && (window as any).fbq) {
+      (window as any).fbq('track', 'Lead', {
+        content_name: 'Duo Head 5% Coupon Copied',
+        coupon_code: 'PROMO5'
+      });
+    }
     setTimeout(() => setCopied(false), 2000);
   };
 
