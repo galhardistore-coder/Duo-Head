@@ -74,89 +74,89 @@ const siteConfig = {
     }
   },
   hero: {
-    promoBadge: "Orgulho Nacional",
-    titleLine1: "O Suporte",
-    titleLine2: "Mais Vendido",
-    titleLine3: "Do Brasil",
-    description: "Autonomia total para raspar a cabeça com perfeição. O Duo Head é a inovação que o brasileiro precisava.",
+    promoBadge: "Produção Própria & Envio do Brasil",
+    titleLine1: "DUO HEAD",
+    titleLine2: "Suporte Duplo",
+    titleLine3: "Para Raspar a Cabeça",
+    description: "O DUO Head é um suporte duplo inovador desenvolvido para quem busca mais praticidade na hora de raspar a cabeça. Compatível com as lâminas Mach3 e Fusion 5, ele ajuda a cobrir uma área maior em menos passadas, trazendo total controle, rapidez e facilidade no uso diário.",
     ctaText: "Aproveitar Oferta"
   },
   problem_solution: {
-    problemTitle: "Chega de sofrer sozinho",
-    problemSubtitle: "Por que continuar dependendo dos outros?",
+    problemTitle: "Chega de sofrer ao barbear a cabeça",
+    problemSubtitle: "Por que continuar dependendo dos outros para raspar a cabeça?",
     problems: [
-      "Dificuldade total na parte de trás",
-      "Gasto excessivo com barbeiros",
-      "Cortes mal acabados e falhos",
-      "Falta de tempo para ir ao salão",
-      "Dependência de ajuda para o básico"
+      "Dificuldade de alcançar perfeitamente a parte de trás da cabeça",
+      "Gasto excessivo e recorrente com barbeiros e salões",
+      "Cortes indesejados, irritação e falhas no acabamento",
+      "Falta de tempo no dia a dia para manter a cabeça raspada",
+      "Falta de controle e autonomia usando barbeadores comuns"
     ],
-    solutionTitle: "Duo Head Brasil",
-    solutionSubtitle: "Sua liberdade começa aqui"
+    solutionTitle: "DUO Head Brasil",
+    solutionSubtitle: "Sua autonomia para raspar a cabeça com precisão"
   },
   benefits: {
-    sectionTitle: "O que o Brasil já sabe:",
+    sectionTitle: "Inovação inteligente para o seu barbear:",
     items: [
-      { "title": "Independência", "icon": "ShieldCheck", "desc": "Seja o seu próprio barbeiro com precisão absoluta." },
-      { "title": "Mais Reais no Bolso", "icon": "TrendingUp", "desc": "Economia garantida todos os meses." },
-      { "title": "Alcança Tudo", "icon": "CheckCircle2", "desc": "Guia inteligente que atinge cada ângulo." },
-      { "title": "Pronto em Minutos", "icon": "Clock", "desc": "Agilidade total para o homem moderno." },
-      { "title": "Corte Profissional", "icon": "UserCheck", "desc": "Acabamento de luxo sem sair de casa." },
-      { "title": "Made in Brasil", "icon": "Package", "desc": "Orgulho e qualidade nacional reconhecida." }
+      { "title": "Autonomia", "icon": "ShieldCheck", "desc": "Raspe toda a cabeça sozinho, com total controle e sem depender de ninguém." },
+      { "title": "Economia Real", "icon": "TrendingUp", "desc": "Reduza suas visitas ao barbeiro e economize seu dinheiro todos os meses." },
+      { "title": "Suporte Duplo", "icon": "CheckCircle2", "desc": "Encaixe inteligente que garante o ângulo perfeito em cada passada." },
+      { "title": "Rapidez Incrível", "icon": "Clock", "desc": "Cobre uma área maior com metade do tempo e menos esforço." },
+      { "title": "Tecnologia 3D", "icon": "UserCheck", "desc": "Desenvolvido em impressão 3D de alta qualidade com material de alta durabilidade." },
+      { "title": "Produção Nacional", "icon": "Package", "desc": "Produto nacional fabricado no Brasil com estoque pronto para envio imediato." }
     ]
   },
   differentials: {
-    sectionTitle: "O que nos torna Incomparáveis?",
+    sectionTitle: "Por que escolher o suporte para barbear DUO Head?",
     items: [
-      { "label": "Tecnologia", "value": "Impressão 3D de Nível Industrial" },
-      { "label": "Logística", "value": "Estoque no ABC e Envio Expresso" },
-      { "label": "Suporte", "value": "Atendimento VIP 100% Brasileiro" },
-      { "label": "Confiança", "value": "Garantia de Satisfação Duo Head" },
-      { "label": "Versatilidade", "value": "Compatível com as Melhores Lâminas" }
+      { "label": "Tecnologia", "value": "Impressão 3D de Alta Resistência" },
+      { "label": "Compatibilidade", "value": "Lâminas Gillette Mach3 e Fusion 5" },
+      { "label": "Design Inteligente", "value": "Suporte Duplo para Raspar a Cabeça" },
+      { "label": "Produção Nacional", "value": "Fabricação Própria no Brasil" },
+      { "label": "Alta Praticidade", "value": "Cobre Área Maior com Menos Passadas" }
     ]
   },
   social_proof: {
-    sectionTitle: "Quem usa, recomenda!",
-    quote: "Simplesmente foda. Antes eu ficava dependendo da minha esposa toda semana, agora faço em 5 minutos enquanto tomo banho. A qualidade é absurda!",
+    sectionTitle: "Quem usa o DUO Head, recomenda!",
+    quote: "Produto muito prático. Antes eu ficava dependendo da ajuda da minha esposa toda semana para raspar e fazer a parte de trás, agora faço tudo em minutos e com tranquilidade. O suporte duplo tem ótimo encaixe e a compatibilidade com a lâmina Mach3 é excelente!",
     author: "Ricardo Santos",
     authorTitle: "Empresário • São Bernardo, SP",
     ctaText: "Ver comunidade no Instagram"
   },
   products: {
     SUPPORT_WITH_FUSION5: {
-      name: "Kit Suporte + Lâmina Fusion5",
-      description: "Suporte premium + Refil de lâmina Fusion5 incluso.",
+      name: "Kit DUO Head + Lâmina Fusion 5",
+      description: "Suporte duplo impresso em 3D + refil de lâmina compatível com o sistema Fusion 5.",
       priceOld: "114,90",
       priceNew: "80,43",
       link: "https://duo-head-suporte-duplo-para-laminas.pay.yampi.com.br/r/8QOPT2L6CY",
       featured: true
     },
     SUPPORT_ONLY_FUSION5: {
-      name: "Suporte Fusion5 (Sem lâmina)",
-      description: "Apenas o suporte para quem já possui a lâmina Fusion5.",
+      name: "Suporte DUO Head Fusion 5 (Sem lâmina)",
+      description: "Suporte duplo em impressão 3D para quem já possui a lâmina Fusion 5.",
       priceOld: "64,90",
       priceNew: "45,43",
       link: "https://duo-head-suporte-duplo-para-laminas.pay.yampi.com.br/r/BD8U7ND8AO"
     },
     SUPPORT_WITH_MACH3: {
-      name: "Kit Suporte + Lâmina Mach3",
-      description: "Suporte premium + Refil de lâmina Mach3 incluso.",
+      name: "Kit DUO Head + Lâmina Mach3",
+      description: "Suporte duplo impresso em 3D + refil de lâmina compatível com o sistema Mach3.",
       priceOld: "99,90",
       priceNew: "69,93",
       link: "https://duo-head-suporte-duplo-para-laminas.pay.yampi.com.br/r/BD8U7ND8AO",
       featured: true
     },
     SUPPORT_ONLY_MACH3: {
-      name: "Suporte Mach3 (Sem lâmina)",
-      description: "Apenas o suporte para quem já possui a lâmina Mach3.",
+      name: "Suporte DUO Head Mach3 (Sem lâmina)",
+      description: "Suporte duplo em impressão 3D para quem já possui a lâmina Mach3.",
       priceOld: "64,90",
       priceNew: "45,43",
       link: "https://duo-head-suporte-duplo-para-laminas.pay.yampi.com.br/r/BD8U7ND8AO"
     }
   },
   visuals_section: {
-    title: "Veja o Duo Head em ação",
-    description: "Assista como é simples e rápido ter o resultado que você sempre quis.",
+    title: "Veja o DUO Head em ação",
+    description: "Assista ao vídeo demonstrativo e confira como o suporte facilita o corte diário com praticidade profunda.",
     ctaText: "Quero este resultado agora"
   },
   delivery_section: [

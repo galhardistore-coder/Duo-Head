@@ -1,6 +1,8 @@
 {
   "name": "DUO Head Suporte duplo",
-  "description": "Página de vendas para o Suporte Duplo DUO HEAD, acessório inovador para raspar a cabeça com autonomia e perfeição.",
+  "description": "DUO Head é o suporte duplo para raspar a cabeça desenvolvido com tecnologia de impressão 3D, compatível com lâminas Mach3 e Fusion 5 para um barbear rápido, prático e independente.",
   "requestFramePermissions": [],
-  "majorCapabilities": []
+  "majorCapabilities": [
+    "MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"
+  ]
 }
