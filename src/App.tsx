@@ -1,4 +1,4 @@
-import { motion } from 'motion/react';
+import { motion, AnimatePresence } from 'motion/react';
 import { 
   CheckCircle2, 
   ShoppingBag, 
@@ -10,10 +10,13 @@ import {
   Instagram,
   UserCheck,
   ChevronRight,
+  ChevronDown,
   X,
-  Play
+  Play,
+  HelpCircle
 } from 'lucide-react';
 import React, { useState, useEffect } from 'react';
+import DuoAssistChat from './components/DuoAssistChat';
 import useEmblaCarousel from 'embla-carousel-react';
 import { clsx, type ClassValue } from 'clsx';
 import { twMerge } from 'tailwind-merge';
@@ -336,7 +339,7 @@ const VideoPlayer = ({ srcId, title, className }: { srcId: string; title: string
   );
 };
 
-const CountdownTimer = () => {
+const CountdownTimer = ({ isScrolled }: { isScrolled: boolean }) => {
   const [timeLeft, setTimeLeft] = useState(600); // 10 minutes in seconds
 
   useEffect(() => {
@@ -354,18 +357,67 @@ const CountdownTimer = () => {
   };
 
   return (
-    <div className="fixed top-0 left-0 right-0 z-[60] bg-br-green h-12 px-4 border-b border-br-yellow/30 flex items-center justify-center gap-2 md:gap-3 shadow-xl">
-      <div className="flex items-center gap-1.5 md:gap-2">
-        <Clock size={14} className="text-br-yellow animate-pulse md:w-4 md:h-4" />
-        <p className="text-white text-[9px] md:text-sm font-bold uppercase tracking-[0.1em] md:tracking-widest whitespace-nowrap">
-          Oferta de Lançamento termina em:
-        </p>
+    <div className={cn(
+      "fixed top-0 left-0 right-0 z-[60] bg-br-green h-12 px-4 md:px-8 border-b border-br-yellow/30 flex items-center transition-all duration-300 shadow-xl",
+      isScrolled ? "justify-between" : "justify-center"
+    )}>
+      {/* 1. BRAND LOGO - Transitions in when scrolling begins */}
+      <div className="flex items-center min-w-[30px] md:min-w-[150px]">
+        <AnimatePresence>
+          {isScrolled && (
+            <motion.div 
+              initial={{ opacity: 0, x: -20, scale: 0.9 }}
+              animate={{ opacity: 1, x: 0, scale: 1 }}
+              exit={{ opacity: 0, x: -20, scale: 0.9 }}
+              transition={{ duration: 0.3, ease: "easeOut" }}
+              className="flex items-center gap-2"
+            >
+              <div className="w-8 h-8 bg-br-yellow text-br-green rounded-lg flex items-center justify-center rotate-3 border border-br-yellow/40 shadow-sm flex-shrink-0">
+                <span className="font-black text-base md:text-lg select-none">{siteConfig.brand.name[0]}</span>
+              </div>
+              <div className="flex flex-col select-none leading-none -gap-0.5 hidden xs:flex">
+                <span className="font-black text-xs md:text-sm tracking-tighter text-white uppercase">{siteConfig.brand.name}</span>
+                <span className="text-[7px] font-bold tracking-[0.15em] text-br-yellow uppercase">{siteConfig.brand.edition}</span>
+              </div>
+            </motion.div>
+          )}
+        </AnimatePresence>
       </div>
-      <div className={cn(
-        "text-lg md:text-2xl font-mono font-black tabular-nums min-w-[60px] md:min-w-[70px] text-center",
-        timeLeft < 60 ? "text-red-400 animate-pulse" : "text-br-yellow"
-      )}>
-        {formatTime(timeLeft)}
+
+      {/* 2. TIMER VALUE AND LABEL */}
+      <div className="flex items-center gap-1.5 md:gap-2 justify-center">
+        <Clock size={13} className="text-br-yellow animate-pulse w-3.5 h-3.5 md:w-4 md:h-4" />
+        <p className="text-white text-[9px] md:text-xs font-bold uppercase tracking-[0.05em] md:tracking-widest whitespace-nowrap">
+          <span className="hidden sm:inline">Oferta de Lançamento termina em:</span>
+          <span className="sm:hidden">Oferta termina em:</span>
+        </p>
+        <div className={cn(
+          "text-sm md:text-lg font-mono font-black tabular-nums min-w-[45px] md:min-w-[60px] text-center ml-0.5",
+          timeLeft < 60 ? "text-red-400 animate-pulse" : "text-br-yellow"
+        )}>
+          {formatTime(timeLeft)}
+        </div>
+      </div>
+
+      {/* 3. CTA BUTTON - Transitions in when scrolling begins */}
+      <div className="flex items-center min-w-[30px] md:min-w-[150px] justify-end">
+        <AnimatePresence>
+          {isScrolled && (
+            <motion.div
+              initial={{ opacity: 0, x: 20, scale: 0.9 }}
+              animate={{ opacity: 1, x: 0, scale: 1 }}
+              exit={{ opacity: 0, x: 20, scale: 0.9 }}
+              transition={{ duration: 0.3, ease: "easeOut" }}
+            >
+              <a 
+                href="#precos"
+                className="bg-br-yellow hover:bg-yellow-400 text-br-blue text-[9px] md:text-xs font-black uppercase py-1.5 px-3 md:px-4 rounded-full flex items-center gap-1 transition-all shadow-md active:scale-95 whitespace-nowrap cursor-pointer"
+              >
+                Comprar <span className="hidden md:inline">Agora</span> ➔
+              </a>
+            </motion.div>
+          )}
+        </AnimatePresence>
       </div>
     </div>
   );
@@ -756,12 +808,103 @@ const ProductCard = ({
   );
 };
 
+const FAQAccordion = () => {
+  const [openIndex, setOpenIndex] = React.useState<number | null>(null);
+
+  const faqItems = [
+    {
+      question: "O que é o DUO Head?",
+      answer: "O DUO Head é um suporte duplo para lâminas desenvolvido para facilitar o barbear da cabeça, trazendo mais praticidade, controle e agilidade no uso diário. Ele funciona como um suporte duplo para lâminas Gillette (modelos compatíveis), cobrindo uma área de corte maior com menos passadas e de forma 100% confortável."
+    },
+    {
+      question: "O DUO Head serve para lâminas Gillette Mach3?",
+      answer: "Sim! Oferecemos uma versão do suporte duplo projetada com encaixes sob medida para as lâminas Gillette Mach3. É perfeita para quem busca um barbear cabeça com mais praticidade usando cargas Mach3 de forma firme e segura."
+    },
+    {
+      question: "O DUO Head serve para lâminas Gillette Fusion 5?",
+      answer: "Sim! Também temos a versão com encaixe compatível com as lâminas Gillette Fusion 5. O suporte Fusion 5 possui encaixes de alta precisão que garantem a estabilidade perfeita das lâminas ao raspar."
+    },
+    {
+      question: "O DUO Head acompanha lâminas?",
+      answer: "Depende da variação escolhida! Na nossa seção de ofertas, você encontrará tanto os pacotes apenas com o suporte para lâminas Gillette quanto os Kits Completos que já vêm com refis inclusos (seja no kit Mach3 ou no kit Fusion 5), prontos para usar imediato."
+    },
+    {
+      question: "Para quem é indicado o DUO Head?",
+      answer: "É indicado para qualquer pessoa que raspa a cabeça por estilo ou preferência e deseja total independência. Com ele, você consegue o melhor suporte para barbear a cabeça sozinho, com visão prática de todos os ângulos e sem depender de ninguém."
+    },
+    {
+      question: "O DUO Head é um barbeador elétrico?",
+      answer: "Não. O DUO Head não possui motor nem circuito elétrico. Ele é um suporte duplo para lâminas manual inovador desenvolvido em impressão 3D premium, ideal para ser usado no banho ou debaixo da torneira mantendo a segurança habitual das lâminas Gillette."
+    },
+    {
+      question: "O DUO Head é feito em impressão 3D?",
+      answer: "Sim! Ele é produzido com tecnologia de impressão 3D industrial com termoplásticos resistentes à água e ao sabão. O produto conta com produção própria no Brasil, envio rápido com rastreamento integral."
+    },
+    {
+      question: "Qual a diferença entre a versão Mach3 e a versão Fusion 5?",
+      answer: "A diferença principal reside no tipo de encaixe. A versão compatível com Mach3 se ajusta especificamente ao refil da linha Gillette Mach3, enquanto o suporte Fusion 5 é ajustado para lâminas Gillette Fusion 5. Ambos os modelos atuam como suporte duplo para lâminas, agilizando seu visual diario!"
+    }
+  ];
+
+  return (
+    <div className="space-y-4 max-w-3xl mx-auto">
+      {faqItems.map((item, index) => {
+        const isOpen = openIndex === index;
+        return (
+          <div 
+            key={index} 
+            className={cn(
+              "rounded-2xl border transition-all duration-300 overflow-hidden",
+              isOpen 
+                ? "bg-white border-br-green/35 shadow-lg shadow-br-green/5" 
+                : "bg-white border-gray-150/80 hover:border-br-green/20"
+            )}
+          >
+            <button
+              onClick={() => setOpenIndex(isOpen ? null : index)}
+              className="w-full text-left p-6 flex justify-between items-center gap-4 cursor-pointer focus:outline-none select-none"
+              aria-expanded={isOpen}
+            >
+              <span className={cn(
+                "font-bold text-base sm:text-lg transition-colors leading-tight",
+                isOpen ? "text-br-green" : "text-br-blue"
+              )}>
+                {item.question}
+              </span>
+              <div className={cn(
+                "p-1.5 rounded-full bg-gray-50 text-br-blue/50 transition-all duration-300 flex-shrink-0",
+                isOpen && "bg-br-green/10 text-br-green rotate-180"
+              )}>
+                <ChevronDown size={20} strokeWidth={2.5} />
+              </div>
+            </button>
+            <motion.div
+              initial={false}
+              animate={{ 
+                height: isOpen ? "auto" : 0,
+                opacity: isOpen ? 1 : 0
+              }}
+              transition={{ duration: 0.25, ease: "easeInOut" }}
+              className="overflow-hidden"
+            >
+              <div className="p-6 pt-0 text-sm sm:text-base text-br-blue/70 leading-relaxed border-t border-gray-100 font-normal">
+                {item.answer}
+              </div>
+            </motion.div>
+          </div>
+        );
+      })}
+    </div>
+  );
+};
+
 // --- Main Application ---
 export default function App() {
   const [isScrolled, setIsScrolled] = useState(false);
   const [inIframe, setInIframe] = useState(false);
   const [showPopup, setShowPopup] = useState(false);
   const [copied, setCopied] = useState(false);
+  const [isChatOpen, setIsChatOpen] = useState(false);
 
   useEffect(() => {
     // Exit intent detection
@@ -792,6 +935,14 @@ export default function App() {
       });
     }
     setTimeout(() => setCopied(false), 2000);
+  };
+
+  const scrollToFAQ = (e: React.MouseEvent) => {
+    e.preventDefault();
+    const element = document.getElementById('faq-section');
+    if (element) {
+      element.scrollIntoView({ behavior: 'smooth' });
+    }
   };
 
   useEffect(() => {
@@ -837,14 +988,14 @@ export default function App() {
   return (
     <div className="min-h-screen bg-[#FDFCF0] text-br-blue font-sans overflow-x-hidden">
       
-      <CountdownTimer />
+      <CountdownTimer isScrolled={isScrolled} />
       
       {/* Header / Nav */}
       <nav className={cn(
-        "fixed top-12 left-0 right-0 z-50 transition-all duration-300 py-4 px-6 flex justify-between items-center",
+        "fixed top-12 left-0 right-0 z-50 transition-all duration-300 py-5 px-6 flex justify-between items-center",
         isScrolled 
-          ? (inIframe ? "bg-white shadow-lg border-b border-br-green/10" : "bg-white/95 backdrop-blur-md shadow-lg border-b border-br-green/10") 
-          : "bg-transparent"
+          ? "opacity-0 -translate-y-6 pointer-events-none" 
+          : "opacity-100 bg-transparent"
       )}>
         <div className="flex items-center gap-2">
           <div className="w-12 h-12 bg-br-green rounded-xl flex items-center justify-center shadow-lg shadow-br-green/20 rotate-3">
@@ -1149,6 +1300,41 @@ export default function App() {
         </div>
       </Section>
 
+      {/* 12. FAQ & SEO SECTION */}
+      <Section id="faq-section" className="bg-gray-50/50 border-b border-gray-100 relative overflow-hidden">
+        {/* Subtle background gradient elements */}
+        <div className="absolute top-0 left-1/4 w-96 h-96 bg-br-green/5 rounded-full blur-[100px] pointer-events-none" />
+        <div className="absolute bottom-0 right-1/4 w-96 h-96 bg-br-yellow/5 rounded-full blur-[100px] pointer-events-none" />
+        
+        <div className="max-w-4xl mx-auto relative z-10">
+          <SectionTitle>Perguntas Frequentes</SectionTitle>
+          <p className="text-center text-br-blue/65 text-lg mb-12 -mt-6 max-w-2xl mx-auto font-medium">
+            Tire suas dúvidas sobre o <strong className="text-br-green font-black">DUO Head</strong>, o suporte duplo para lâminas Gillette desenvolvido em impressão 3D para raspar a cabeça com mais praticidade.
+          </p>
+
+          <FAQAccordion />
+
+          <div className="mt-16 bg-white p-8 md:p-12 rounded-[2.5rem] border border-gray-100 shadow-xl text-center max-w-3xl mx-auto relative overflow-hidden">
+            <div className="absolute top-0 left-0 w-2 h-full bg-br-yellow animate-pulse" />
+            <span className="text-br-green font-black tracking-widest text-xs uppercase mb-3 block">SUPORTE E ATENDIMENTO 🇧🇷</span>
+            <p className="text-2xl font-black text-br-blue italic uppercase mb-2">Ainda ficou com dúvidas?</p>
+            <p className="text-br-blue/70 text-sm md:text-base font-medium mb-8 max-w-xl mx-auto">
+              Fale conosco pelo WhatsApp e escolha o melhor kit ou tire dúvidas sobre a compatibilidade do suporte para barbear cabeça.
+            </p>
+            <div className="flex justify-center">
+              <Button
+                href={ASSETS.LINKS.WHATSAPP}
+                variant="whatsapp"
+                className="inline-flex items-center gap-3 py-4 md:py-5 px-10 text-sm md:text-base font-black shadow-lg hover:shadow-green-500/20 active:scale-95 transition-all"
+              >
+                <MessageCircle size={22} className="fill-current text-white" />
+                Falar no WhatsApp
+              </Button>
+            </div>
+          </div>
+        </div>
+      </Section>
+
       {/* Footer */}
       <footer className="py-20 px-6 bg-br-blue text-white text-center pb-32">
         <div className="flex flex-col items-center justify-center gap-4 mb-10">
@@ -1267,6 +1453,46 @@ export default function App() {
           </motion.div>
         </div>
       )}
+
+      {/* Floating doubts balloon */}
+      <motion.button
+        onClick={() => setIsChatOpen(true)}
+        initial={{ scale: 0, opacity: 0 }}
+        animate={{ 
+          scale: 1, 
+          opacity: 1,
+          y: [0, -8, 0]
+        }}
+        whileHover={{ scale: 1.05 }}
+        whileTap={{ scale: 0.95 }}
+        transition={{ 
+          scale: { delay: 0.8 },
+          opacity: { delay: 0.8 },
+          y: {
+            repeat: Infinity,
+            duration: 3.5,
+            ease: "easeInOut"
+          }
+        }}
+        className="fixed bottom-[110px] left-6 md:bottom-8 md:left-8 z-45 bg-br-blue hover:bg-[#121c3a] text-white py-3 px-4 rounded-full flex items-center gap-2.5 shadow-[0_12px_30px_rgba(11,19,43,0.35)] border-2 border-br-yellow/30 hover:border-br-yellow transition-all duration-300 group cursor-pointer"
+        title="Dúvidas Frequentes"
+      >
+        <span className="flex relative">
+          <HelpCircle size={18} className="text-br-yellow group-hover:rotate-12 transition-transform" />
+          <span className="absolute -top-1 -right-1 w-2 h-2 bg-br-green rounded-full animate-ping" />
+          <span className="absolute -top-1 -right-1 w-2 h-2 bg-br-green rounded-full" />
+        </span>
+        <span className="font-black text-white text-xs uppercase tracking-wider select-none">
+          Dúvidas?
+        </span>
+      </motion.button>
+
+      {/* DuoAssist AI Chat component */}
+      <DuoAssistChat 
+        isOpen={isChatOpen} 
+        onClose={() => setIsChatOpen(false)} 
+        whatsappLink={ASSETS.LINKS.WHATSAPP}
+      />
 
     </div>
   );
